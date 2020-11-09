@@ -1,7 +1,21 @@
-﻿
+﻿@model int
 @{
     ViewBag.Title = "index";
 }
 
-<h2>index</h2>
+<h2>HTTP5101 B Assignment 3</h2>
 
+<h3>Teachers</h3>
+<div style="padding: 20px" >
+    <form action="/Teacher/Show" method="POST">
+        <label for="teacherId">Search by ID: </label>
+        <input id="teacherId" name="teacherId" type="number" min="1" max="@Model" />
+        <input type="submit" value="Go" />
+    </form>
+</div>
+<div style="padding: 20px">
+    <form action="/Teacher/List" method="POST">
+        <label for="listTeachers">View all teachers: </label>
+        <input id="listTeachers" name="listTeachers" type="submit" value="Go" />
+    </form>
+</div>

@@ -15,3 +15,11 @@ select,
 textarea {
     max-width: 280px;
 }
+
+.searchForm {
+    padding: 32px;
+}
+
+.listForm {
+    padding: 32px; 
+}

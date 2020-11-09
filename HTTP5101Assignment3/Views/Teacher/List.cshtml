@@ -1,7 +1,21 @@
-﻿
+﻿<!-- A View which uses server rendering to display teachers from
+the MySQL Database -->
+
+@model IEnumerable<String>
+
 @{
     ViewBag.Title = "List";
 }
 
-<h2>List</h2>
+
+<h2>Teachers</h2>
+<h3>
+    This page shows a list of all the teachers in the database.
+</h3>
+
+<div>
+    @foreach( var teacher in Model ) {
+        <div>@teacher</div>
+    }
+</div>
 
