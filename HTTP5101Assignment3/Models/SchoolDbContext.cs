@@ -10,6 +10,8 @@ namespace HTTP5101Assignment3.Models
     // Much of this class was copied from 
     // https://github.com/christinebittle/BlogProject_1/blob/master/BlogProject/Models/BlogDbContext.cs
     // as cloned on 2020/11/04.
+
+    // HTTP5101 B Assignment 3: A class which connects to your MySQL database.
     public class SchoolDbContext
     {
         // These properties and accessors contain the information required to connect to 

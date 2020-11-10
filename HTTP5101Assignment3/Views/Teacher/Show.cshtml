@@ -1,11 +1,19 @@
-﻿@model HTTP5101Assignment3.Models.Teacher
+﻿<!-- A View which uses server rendering to display a teacher from
+the MySQL Database-->
+
+@model HTTP5101Assignment3.Models.Teacher
 
 @{
     ViewBag.Title = "Show";
 }
 
-<!-- A View which uses server rendering to display a teacher from
-the MySQL Database-->
+<h2>Teacher</h2>
+<div>
+    <h3>@Model.firstName @Model.lastName</h3>
+    <p><strong>Employee number:</strong> @Model.employeeNumber</p>
+    <p><strong>Hire date:</strong> @Model.hireDate.ToString( "MM/dd/yyyy" )</p>
+    <p><strong>Salary:</strong> $@Model.salary.ToString( "0.00" ) / hour</p>
+    <p><strong>Teacher ID:</strong> @Model.teacherId</p>
+</div>
 
-<h2>Show</h2>
-
+<a href="/Teacher">Back to Main Page</a>

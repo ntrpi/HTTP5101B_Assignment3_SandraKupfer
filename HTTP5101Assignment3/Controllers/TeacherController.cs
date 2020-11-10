@@ -10,7 +10,9 @@ namespace HTTP5101Assignment3.Controllers
 
     public class TeacherController : Controller
     {
-        // GET: Teacher
+        // GET: /Teacher
+        // Get the highest teacher ID and send it to index.chtml.
+        [HttpGet]
         public ActionResult Index()
         {
             TeacherDataController controller = new TeacherDataController();

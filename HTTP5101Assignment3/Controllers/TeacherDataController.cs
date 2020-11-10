@@ -9,14 +9,26 @@ using System.Web.Http;
 
 namespace HTTP5101Assignment3.Controllers
 {
-    // A WebAPI Controller which allows you to access information about
-    // teachers.
+    // HTTP5101 B Assignment 3: A WebAPI Controller which allows you to access 
+    // information about teachers.
     public class TeacherDataController : ApiController
     {
         // This object will handle the interactions with the
         // database.
         private SchoolDbContext schoolDb = new SchoolDbContext();
 
+        /// <summary>
+        /// This function is called in order to determine the highest teacher ID
+        /// in the database for validation in the feature allowing the user to 
+        /// find a specific teacher by their ID.
+        /// </summary>
+        /// <returns>A positive integer that represents the highest teacher ID in
+        /// the database.
+        /// </returns>
+        /// <example>
+        /// GET api/TeacherData/getHighestTeacherId
+        /// </example>
+        [HttpGet]
         public int getHighestTeacherId()
         {
             // Create and open a connection to the database.
