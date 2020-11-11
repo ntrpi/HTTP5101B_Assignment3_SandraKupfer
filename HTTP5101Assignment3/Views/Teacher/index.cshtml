@@ -12,13 +12,34 @@
     mention of css in the rubric. 
 -->
 <div style="padding: 20px" >
+    <h4>Find a Teacher</h4>
     <form action="/Teacher/Show" method="POST">
         <label for="teacherId">Search by ID: </label>
         <input id="teacherId" name="teacherId" type="number" min="1" max="@Model" />
         <input type="submit" value="Go" />
     </form>
 </div>
+
+<!-- This is pretty crude search functionality, but it works if the value is
+    exactly the same.-->
 <div style="padding: 20px">
+    <h4>Advanced Search</h4>
+    <form action="/Teacher/Results" method="POST">
+        <label for="columnName">Select a property: </label>
+        <select name="columnName" id="columnName">
+            <option selected="selected" value="teacherfname">First Name</option>
+            <option value="teacherlname">Last Name</option>
+            <option value="employeenumber">Employee Number</option>
+            <option value="hiredate">Hire Date</option>
+            <option value="salary">Salary</option>
+        </select>
+        <label for="columnValue">Value: </label>
+        <input id="columnValue" name="columnValue" type="text" value="Name"/>
+        <input type="submit" value="Go" />
+    </form>
+</div>
+<div style="padding: 20px">
+    <h4>All Teachers</h4>
     <form action="/Teacher/List" method="POST">
         <label for="listTeachers">View all teachers: </label>
         <input id="listTeachers" name="listTeachers" type="submit" value="Go" />

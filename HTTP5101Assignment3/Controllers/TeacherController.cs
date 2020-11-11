@@ -31,12 +31,24 @@ namespace HTTP5101Assignment3.Controllers
         }
 
         // POST: /Teacher/Show
+        // Get the information for the teacher with that ID and send it to
+        // Show.chtml.
         [HttpPost]
         public ActionResult Show( int? teacherId )
         {
             TeacherDataController controller = new TeacherDataController();
             HTTP5101Assignment3.Models.Teacher teacher = controller.getTeacher( teacherId );
             return View( teacher );
+        }
+
+        // POST: /Teacher/Results
+        // Get the list of teachers that match the search criteria and send
+        // it to Results.chtml.
+        public ActionResult Results( string columnName, string columnValue )
+        {
+            TeacherDataController controller = new TeacherDataController();
+            IEnumerable<HTTP5101Assignment3.Models.Teacher> teachers = controller.getTeachers( columnName, columnValue );
+            return View( teachers );
         }
     }
 }

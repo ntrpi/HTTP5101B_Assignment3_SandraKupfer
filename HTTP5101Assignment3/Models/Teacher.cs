@@ -16,5 +16,6 @@ namespace HTTP5101Assignment3.Models
         public string firstName;
         public string lastName;
         public int teacherId;
+        public IEnumerable<String> courses;
     }
 }

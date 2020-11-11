@@ -14,6 +14,15 @@ the MySQL Database-->
     <p><strong>Hire date:</strong> @Model.hireDate.ToString( "MM/dd/yyyy" )</p>
     <p><strong>Salary:</strong> $@Model.salary.ToString( "0.00" ) / hour</p>
     <p><strong>Teacher ID:</strong> @Model.teacherId</p>
+    <p><strong>Courses:</strong></p>
+    <ul>
+        @foreach( var course in Model.courses ) {
+            <li>@course</li>
+        }
+    </ul>
+
 </div>
 
-<a href="/Teacher">Back to Main Page</a>
+<div style="margin-top: 40px">
+    <a href="/Teacher"><strong>Back to Main Page</strong></a>
+</div>
