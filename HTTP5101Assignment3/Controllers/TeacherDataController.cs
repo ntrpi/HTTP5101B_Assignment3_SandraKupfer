@@ -11,11 +11,39 @@ namespace HTTP5101Assignment3.Controllers
 {
     // HTTP5101 B Assignment 3: A WebAPI Controller which allows you to access 
     // information about teachers.
-    public class TeacherDataController : ApiController
+    // This class is heavily influenced by https://github.com/christinebittle/BlogProject_1/blob/master/BlogProject/Controllers/AuthorDataController.cs
+    // as cloned on 2020/11/04.
+
+    public class TeacherDataController: ApiController
     {
         // This object will handle the interactions with the
         // database.
         private SchoolDbContext schoolDb = new SchoolDbContext();
+
+        /// <summary>
+        /// This is a private utility function that opens a connection to 
+        /// the database to save on typing.
+        /// </summary>
+        /// <returns>Open MySqlConnection if creation and opening is successful,
+        /// null otherwise</returns>
+        private MySqlConnection getOpenDbConnection()
+        {
+            // Create and open a connection to the database.
+            MySqlConnection connection = schoolDb.accessDatabase();
+
+            // Try to open the connection.
+            try {
+                connection.Open();
+                return connection;
+
+            } catch( Exception e ) {
+
+                // If unable to connect, output the exception to the console 
+                // and return null.
+                Console.Write( e );
+                return null;
+            }
+        }
 
         /// <summary>
         /// This function is called in order to determine the highest teacher ID
@@ -23,17 +51,21 @@ namespace HTTP5101Assignment3.Controllers
         /// find a specific teacher by their ID.
         /// </summary>
         /// <returns>A positive integer that represents the highest teacher ID in
-        /// the database.
+        /// the database, or a 0 if unable to connect to the database.
         /// </returns>
         /// <example>
         /// GET api/TeacherData/getHighestTeacherId
         /// </example>
         [HttpGet]
-        public int getHighestTeacherId()
+        public Int32 getHighestTeacherId()
         {
             // Create and open a connection to the database.
-            MySqlConnection connection = schoolDb.accessDatabase();
-            connection.Open();
+            MySqlConnection connection = getOpenDbConnection();
+            if( connection == null ) {
+
+                // Return 0 if the connection was not successful.
+                return 0;
+            }
 
             // Create and set a query for the database that will retrieve
             // the teachers' first and last names.
@@ -56,6 +88,7 @@ namespace HTTP5101Assignment3.Controllers
             // Close the connection.
             connection.Close();
 
+            // Return the max teacher ID.
             return maxTeacherId;
         }
 
@@ -69,32 +102,48 @@ namespace HTTP5101Assignment3.Controllers
         /// GET api/TeacherData/listTeachers
         /// </example>
         [HttpGet]
-        public IEnumerable<String> listTeachers() 
+        [Route( "api/TeacherData/listTeachers" )]
+        public IEnumerable<Teacher> listTeachers()
         {
             // Create and open a connection to the database.
-            MySqlConnection connection = schoolDb.accessDatabase();
-            connection.Open();
+            MySqlConnection connection = getOpenDbConnection();
+            if( connection == null ) {
+
+                // Return an empty list if the connection was not successful.
+                new List<Teacher>();
+            }
 
             // Create and set a query for the database that will retrieve
             // the teachers' first and last names.
             MySqlCommand command = connection.CreateCommand();
-            command.CommandText = "SELECT teacherfname, teacherlname FROM teachers";
+            command.CommandText = "SELECT * FROM teachers";
 
             // Create a and object to hold the results of the command
             // and execute.
             MySqlDataReader results = command.ExecuteReader();
 
             // Create a list object to hold the teacher names.
-            List<String> teachers = new List<string>();
+            List<Teacher> teachers = new List<Teacher>();
 
             // Read the results, one row at a time.
             while( results.Read() ) {
 
+                // Create a new Teacher object.
+                Teacher teacher = new Teacher();
+
                 // The results will have the same column names as
                 // the database since we did not alias them.
-                // Create a string with the first and last names together
-                // and add them to the teachers list.
-                teachers.Add( results[ "teacherfname" ] + " " + results[ "teacherlname" ] );
+                // Put the data in the corresponding field of the Teacher
+                // object.
+                teacher.employeeNumber = results[ "employeenumber" ].ToString();
+                teacher.firstName = results[ "teacherfname" ].ToString();
+                teacher.lastName = results[ "teacherlname" ].ToString();
+                teacher.teacherId = results.GetInt32( results.GetOrdinal( "teacherid" ) );
+                teacher.salary = results.GetDecimal( results.GetOrdinal( "salary" ) );
+                teacher.hireDate = results.GetDateTime( results.GetOrdinal( "hiredate" ) );
+
+                // Add the teacher to the list.
+                teachers.Add( teacher );
             }
 
             // Close the connection to the database.
@@ -132,8 +181,12 @@ namespace HTTP5101Assignment3.Controllers
             }
 
             // Create and open a connection to the database.
-            MySqlConnection connection = schoolDb.accessDatabase();
-            connection.Open();
+            MySqlConnection connection = getOpenDbConnection();
+            if( connection == null ) {
+
+                // Return an empty Teacher object if the connection was not successful.
+                return new Teacher();
+            }
 
             // Create and set a query for the database that will retrieve
             // the teachers' first and last names.
@@ -162,8 +215,9 @@ namespace HTTP5101Assignment3.Controllers
             // Close the reader so we can send another query.
             results.Close();
 
+            // The following is one of the initiatives outlined in the assignment.
             // Set a query that will get all the courses taught by this teacher.
-            command.CommandText = "SELECT classname from classes WHERE teacherid = " + id;
+            command.CommandText = "SELECT classname FROM classes WHERE teacherid = " + id;
 
             // Execute the command and save the results.
             results = command.ExecuteReader();
@@ -189,6 +243,7 @@ namespace HTTP5101Assignment3.Controllers
             // Return the teacher object.
             return teacher;
         }
+
         /// <summary>
         /// Returns a list of Teacher objects constructed with data for each teacher
         /// that matches the column name and value in the School database.
@@ -209,8 +264,8 @@ namespace HTTP5101Assignment3.Controllers
         /// <example>
         /// GET api/TeacherData/getTeachers/
         /// </example>
+        [HttpGet]
         [Route( "api/TeacherData/getTeachers/{columnName}/{columnValue}" )]
-
         public IEnumerable<Teacher> getTeachers( string columnName, string columnValue )
         {
             // This is to address an error that happens if I start the debugger while
@@ -220,9 +275,13 @@ namespace HTTP5101Assignment3.Controllers
                 return new List<Teacher>();
             }
 
-            // Create and open a connection to the databas e.
-            MySqlConnection connection = schoolDb.accessDatabase();
-            connection.Open();
+            // Create and open a connection to the database.
+            MySqlConnection connection = getOpenDbConnection();
+            if( connection == null ) {
+
+                // Return an empty list if the connection was not successful.
+                new List<Teacher>();
+            }
 
             // Create and set a query for the database that will retrieve
             // the teachers' first and last names.

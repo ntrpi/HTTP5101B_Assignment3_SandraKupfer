@@ -1,7 +1,7 @@
 ﻿<!-- A View which uses server rendering to display teachers from
 the MySQL Database -->
 
-@model IEnumerable<String>
+@model IEnumerable<HTTP5101Assignment3.Models.Teacher>
 
 @{
     ViewBag.Title = "List";
@@ -12,11 +12,19 @@ the MySQL Database -->
     This page shows a list of all the teachers in the database.
 </h3>
 
-<div>
-    @foreach( var teacher in Model ) {
-        <div>@teacher</div>
-    }
-</div>
+
+@if( Model == null || Model.Count() == 0 ) {
+    <div><strong>There are no teachers in the database.</strong></div>
+} else {
+    <div>
+        @foreach( var teacher in Model ) {
+
+            <div>
+                <a href="/Teacher/Show/@teacher.teacherId">@teacher.firstName @teacher.lastName</a>
+            </div>
+        }
+    </div>
+}
 
 <div style="margin-top: 40px">
     <a href="/Teacher"><strong>Back to Main Page</strong></a>

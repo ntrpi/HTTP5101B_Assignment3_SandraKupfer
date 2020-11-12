@@ -1,4 +1,4 @@
-﻿@model int
+﻿@model Int32
 @{
     ViewBag.Title = "index";
 }
@@ -40,7 +40,7 @@
 </div>
 <div style="padding: 20px">
     <h4>All Teachers</h4>
-    <form action="/Teacher/List" method="POST">
+    <form action="/Teacher/List" method="GET">
         <label for="listTeachers">View all teachers: </label>
         <input id="listTeachers" name="listTeachers" type="submit" value="Go" />
     </form>

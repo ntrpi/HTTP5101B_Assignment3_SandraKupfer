@@ -6,24 +6,16 @@
 
 <h2>Search Results</h2>
 
-
-
 @if( Model == null || Model.Count() == 0 ) {
     <div><strong>There are no teachers that match that search criteria.</strong></div>
 } else {
     <div>
-        @foreach( var teacher in Model ) {
+    @foreach( var teacher in Model ) {
 
-            <!-- Again, styling is an issue here.-->
-            <div style="padding: 20px 0"><strong>Name:</strong> @teacher.firstName @teacher.lastName</div>
-
-            <!-- I didn't want to have a form here, I wanted the name to be
-                a link, but I couldn't figure out how to pass the teacherId.-->
-            <form action="/Teacher/Show" method="POST">
-                <input id="teacherId" name="teacherId" type="number" value=@teacher.teacherId style="display: none" />
-                <input type="submit" value="View @teacher.firstName @teacher.lastName" />
-            </form>
-        }
+        <!-- Again, styling is an issue here.-->
+        <div style="padding: 20px 0"><a href="/Teacher/Show/@teacher.teacherId"><strong>@teacher.firstName @teacher.lastName</strong></a>
+        </div>
+    }
     </div>
 }
 
