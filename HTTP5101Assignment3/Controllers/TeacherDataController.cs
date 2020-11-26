@@ -14,37 +14,8 @@ namespace HTTP5101Assignment3.Controllers
     // This class is heavily influenced by https://github.com/christinebittle/BlogProject_1/blob/master/BlogProject/Controllers/AuthorDataController.cs
     // as cloned on 2020/11/04.
 
-    public class TeacherDataController: ApiController
+    public class TeacherDataController: SchoolObjectDataController
     {
-        // This object will handle the interactions with the
-        // database.
-        private SchoolDbContext schoolDb = new SchoolDbContext();
-
-        /// <summary>
-        /// This is a private utility function that opens a connection to 
-        /// the database to save on typing.
-        /// </summary>
-        /// <returns>Open MySqlConnection if creation and opening is successful,
-        /// null otherwise</returns>
-        private MySqlConnection getOpenDbConnection()
-        {
-            // Create and open a connection to the database.
-            MySqlConnection connection = schoolDb.accessDatabase();
-
-            // Try to open the connection.
-            try {
-                connection.Open();
-                return connection;
-
-            } catch( Exception e ) {
-
-                // If unable to connect, output the exception to the console 
-                // and return null.
-                Console.Write( e );
-                return null;
-            }
-        }
-
         /// <summary>
         /// This function is called in order to determine the highest teacher ID
         /// in the database for validation in the feature allowing the user to 
@@ -57,14 +28,14 @@ namespace HTTP5101Assignment3.Controllers
         /// GET api/TeacherData/getHighestTeacherId
         /// </example>
         [HttpGet]
-        public Int32 getHighestTeacherId()
+        public Teacher.MaxId getHighestTeacherId()
         {
             // Create and open a connection to the database.
-            MySqlConnection connection = getOpenDbConnection();
+            MySqlConnection connection = getConnection();
             if( connection == null ) {
 
                 // Return 0 if the connection was not successful.
-                return 0;
+                return new Teacher.MaxId(0);
             }
 
             // Create and set a query for the database that will retrieve
@@ -72,24 +43,24 @@ namespace HTTP5101Assignment3.Controllers
             MySqlCommand command = connection.CreateCommand();
             command.CommandText = "SELECT teacherid FROM teachers ORDER BY teacherid DESC LIMIT 1";
 
-            // Create a and object to hold the results of the command
+            // Create a and object to hold the reader of the command
             // and execute.
-            MySqlDataReader results = command.ExecuteReader();
+            MySqlDataReader reader = command.ExecuteReader();
 
             // Declare an int to hold the highest id. Initialize it to
             // 0.
             int maxTeacherId = 0;
 
-            // Read the results. There should be only one row.
-            while( results.Read() ) {
-                maxTeacherId = results.GetInt32( results.GetOrdinal( "teacherid" ) );
+            // Read the reader. There should be only one row.
+            while( reader.Read() ) {
+                maxTeacherId = reader.GetInt32( reader.GetOrdinal( "teacherid" ) );
             }
 
             // Close the connection.
             connection.Close();
 
             // Return the max teacher ID.
-            return maxTeacherId;
+            return new Teacher.MaxId( maxTeacherId );
         }
 
         /// <summary>
@@ -105,51 +76,36 @@ namespace HTTP5101Assignment3.Controllers
         [Route( "api/TeacherData/listTeachers" )]
         public IEnumerable<Teacher> listTeachers()
         {
-            // Create and open a connection to the database.
-            MySqlConnection connection = getOpenDbConnection();
-            if( connection == null ) {
+            return (IEnumerable<Teacher>) list( "teachers" );
+        }
 
-                // Return an empty list if the connection was not successful.
-                new List<Teacher>();
-            }
-
-            // Create and set a query for the database that will retrieve
-            // the teachers' first and last names.
-            MySqlCommand command = connection.CreateCommand();
-            command.CommandText = "SELECT * FROM teachers";
-
-            // Create a and object to hold the results of the command
-            // and execute.
-            MySqlDataReader results = command.ExecuteReader();
-
+        override
+        protected IEnumerable<SchoolObject> getListFromReader( MySqlDataReader reader )
+        {
             // Create a list object to hold the teacher names.
             List<Teacher> teachers = new List<Teacher>();
 
-            // Read the results, one row at a time.
-            while( results.Read() ) {
+            // Read the reader, one row at a time.
+            while( reader.Read() ) {
 
                 // Create a new Teacher object.
                 Teacher teacher = new Teacher();
 
-                // The results will have the same column names as
+                // The reader will have the same column names as
                 // the database since we did not alias them.
                 // Put the data in the corresponding field of the Teacher
                 // object.
-                teacher.employeeNumber = results[ "employeenumber" ].ToString();
-                teacher.firstName = results[ "teacherfname" ].ToString();
-                teacher.lastName = results[ "teacherlname" ].ToString();
-                teacher.teacherId = results.GetInt32( results.GetOrdinal( "teacherid" ) );
-                teacher.salary = results.GetDecimal( results.GetOrdinal( "salary" ) );
-                teacher.hireDate = results.GetDateTime( results.GetOrdinal( "hiredate" ) );
+                teacher.employeeNumber = reader[ "employeenumber" ].ToString();
+                teacher.firstName = reader[ "teacherfname" ].ToString();
+                teacher.lastName = reader[ "teacherlname" ].ToString();
+                teacher.teacherId = reader.GetInt32( reader.GetOrdinal( "teacherid" ) );
+                teacher.salary = reader.GetDecimal( reader.GetOrdinal( "salary" ) );
+                teacher.hireDate = reader.GetDateTime( reader.GetOrdinal( "hiredate" ) );
 
                 // Add the teacher to the list.
                 teachers.Add( teacher );
             }
 
-            // Close the connection to the database.
-            connection.Close();
-
-            // Return the list of teachers.
             return teachers;
         }
 
@@ -170,75 +126,39 @@ namespace HTTP5101Assignment3.Controllers
         /// <example>
         /// GET api/TeacherData/getTeacher
         /// </example>
+        [HttpGet]
         [Route( "api/TeacherData/getTeacher/{id}" )]
         public Teacher getTeacher( int? id )
         {
-            // This is to address an error that happens if I start the debugger while
-            // I am looking at Show.cshtml. In a professional setting, there would
-            // be some way to have this not show up in a customer-facing release.
-            if( id == null ) {
-                return new Teacher();
-            }
+            return (Teacher) get( "teachers", "teacherid", id );
+        }
 
-            // Create and open a connection to the database.
-            MySqlConnection connection = getOpenDbConnection();
-            if( connection == null ) {
+        private IEnumerable<Class> getClasses( int id )
+        {
+            // TODO
+            return null;
+        }
 
-                // Return an empty Teacher object if the connection was not successful.
-                return new Teacher();
-            }
-
-            // Create and set a query for the database that will retrieve
-            // the teachers' first and last names.
-            MySqlCommand command = connection.CreateCommand();
-            command.CommandText = "SELECT * FROM teachers WHERE teacherid = " + id;
-
-            // Create an object to hold the results of the command
-            // and execute.
-            MySqlDataReader results = command.ExecuteReader();
-
+        override
+        protected SchoolObject getObjectFromReader( MySqlDataReader reader )
+        {
             // Create a Teacher object for the function to return.
             // If no teacher was found, the members of the object
             // will be uninitialized.
             Teacher teacher = new Teacher();
 
-            // Read the results. There should be only one row.
-            while( results.Read() ) {
-                teacher.employeeNumber = results[ "employeenumber" ].ToString();
-                teacher.firstName = results[ "teacherfname" ].ToString();
-                teacher.lastName = results[ "teacherlname" ].ToString();
-                teacher.teacherId = results.GetInt32( results.GetOrdinal( "teacherid" ) );
-                teacher.salary = results.GetDecimal( results.GetOrdinal( "salary" ) );
-                teacher.hireDate = results.GetDateTime( results.GetOrdinal( "hiredate" ) );
+            // Read the reader. There should be only one row.
+            while( reader.Read() ) {
+                teacher.employeeNumber = reader[ "employeenumber" ].ToString();
+                teacher.firstName = reader[ "teacherfname" ].ToString();
+                teacher.lastName = reader[ "teacherlname" ].ToString();
+                teacher.teacherId = reader.GetInt32( reader.GetOrdinal( "teacherid" ) );
+                teacher.salary = reader.GetDecimal( reader.GetOrdinal( "salary" ) );
+                teacher.hireDate = reader.GetDateTime( reader.GetOrdinal( "hiredate" ) );
             }
 
-            // Close the reader so we can send another query.
-            results.Close();
-
-            // The following is one of the initiatives outlined in the assignment.
-            // Set a query that will get all the courses taught by this teacher.
-            command.CommandText = "SELECT classname FROM classes WHERE teacherid = " + id;
-
-            // Execute the command and save the results.
-            results = command.ExecuteReader();
-
-            // Create a list object to hold the courses.
-            List<String> courses = new List<string>();
-
-            // Read the results, one row at a time.
-            while( results.Read() ) {
-
-                // The results will have the same column names as
-                // the database since we did not alias them.
-                // Add the class name to the list of courses.
-                courses.Add( results[ "classname" ].ToString() );
-            }
-
-            // Add the list of courses to the teacher object.
-            teacher.courses = courses;
-
-            // Close the connection.
-            connection.Close();
+            // Get courses
+            teacher.courses = getClasses( teacher.teacherId );
 
             // Return the teacher object.
             return teacher;
@@ -266,56 +186,33 @@ namespace HTTP5101Assignment3.Controllers
         /// </example>
         [HttpGet]
         [Route( "api/TeacherData/getTeachers/{columnName}/{columnValue}" )]
-        public IEnumerable<Teacher> getTeachers( string columnName, string columnValue )
+        public IEnumerable<Teacher> getTeachers( string columns, string conditions )
         {
-            // This is to address an error that happens if I start the debugger while
-            // I am looking at Results.cshtml. In a professional setting, there would
-            // be some way to have this not show up in a customer-facing release.
-            if( columnName == null || columnValue == null ) {
-                return new List<Teacher>();
-            }
+            return (IEnumerable<Teacher>) find( "teachers", columns, conditions );
+        }
 
-            // Create and open a connection to the database.
-            MySqlConnection connection = getOpenDbConnection();
-            if( connection == null ) {
-
-                // Return an empty list if the connection was not successful.
-                new List<Teacher>();
-            }
-
-            // Create and set a query for the database that will retrieve
-            // the teachers' first and last names.
-            MySqlCommand command = connection.CreateCommand();
-            command.CommandText = "SELECT * FROM teachers WHERE " + columnName + " = \"" + columnValue + "\"";
-
-            // Create an object to hold the results of the command
-            // and execute.
-            MySqlDataReader results = command.ExecuteReader();
-
+        override
+        protected IEnumerable<SchoolObject> getSearchResultsFromReader( MySqlDataReader reader )
+        {
             // There may be more than one result.
             List<Teacher> teachers = new List<Teacher>();
 
             // At the same time, there may be none. If not, return the empty list.
-            if( !results.HasRows ) {
-                return teachers;
+            if( reader.HasRows ) {
+                // Read the reader, one row at a time.
+                while( reader.Read() ) {
+                    Teacher teacher = new Teacher();
+
+                    teacher.employeeNumber = reader[ "employeenumber" ].ToString();
+                    teacher.firstName = reader[ "teacherfname" ].ToString();
+                    teacher.lastName = reader[ "teacherlname" ].ToString();
+                    teacher.teacherId = reader.GetInt32( reader.GetOrdinal( "teacherid" ) );
+                    teacher.salary = reader.GetDecimal( reader.GetOrdinal( "salary" ) );
+                    teacher.hireDate = reader.GetDateTime( reader.GetOrdinal( "hiredate" ) );
+
+                    teachers.Add( teacher );
+                }
             }
-
-            // Read the results, one row at a time.
-            while( results.Read() ) {
-                Teacher teacher = new Teacher();
-
-                teacher.employeeNumber = results[ "employeenumber" ].ToString();
-                teacher.firstName = results[ "teacherfname" ].ToString();
-                teacher.lastName = results[ "teacherlname" ].ToString();
-                teacher.teacherId = results.GetInt32( results.GetOrdinal( "teacherid" ) );
-                teacher.salary = results.GetDecimal( results.GetOrdinal( "salary" ) );
-                teacher.hireDate = results.GetDateTime( results.GetOrdinal( "hiredate" ) );
-
-                teachers.Add( teacher );
-            }
-
-            // Close the connection.
-            connection.Close();
 
             // Return the list of teachers.
             return teachers;

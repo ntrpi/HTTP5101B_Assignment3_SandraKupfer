@@ -1,4 +1,4 @@
-﻿@model Int32
+﻿@model HTTP5101Assignment3.Models.Teacher.MaxId
 @{
     ViewBag.Title = "index";
 }
@@ -15,7 +15,7 @@
     <h4>Find a Teacher</h4>
     <form action="/Teacher/Show" method="POST">
         <label for="teacherId">Search by ID: </label>
-        <input id="teacherId" name="teacherId" type="number" min="1" max="@Model" />
+        <input id="teacherId" name="teacherId" type="number" min="1" max="@Model.maxId" />
         <input type="submit" value="Go" />
     </form>
 </div>
