@@ -50,7 +50,7 @@ namespace HTTP5101Assignment3.Controllers
         public ActionResult Show( int? teacherId )
         {
             TeacherDataController controller = new TeacherDataController();
-            HTTP5101Assignment3.Models.Teacher teacher = controller.getTeacher( teacherId );
+            Teacher teacher = controller.getTeacher( teacherId );
             return View( teacher );
         }
 
@@ -69,7 +69,7 @@ namespace HTTP5101Assignment3.Controllers
         public ActionResult Show( int id )
         {
             TeacherDataController controller = new TeacherDataController();
-            HTTP5101Assignment3.Models.Teacher teacher = controller.getTeacher( id );
+            Teacher teacher = controller.getTeacher( id );
             return View( teacher );
         }
 
@@ -93,8 +93,32 @@ namespace HTTP5101Assignment3.Controllers
         public ActionResult Results( string columnName, string columnValue )
         {
             TeacherDataController controller = new TeacherDataController();
-            IEnumerable<HTTP5101Assignment3.Models.Teacher> teachers = controller.getTeachers( columnName, columnValue );
+            IEnumerable<Teacher> teachers = controller.findTeachers( columnName + "LIKE" + columnValue );
             return View( teachers );
         }
+
+
+        public ActionResult Add()
+        {
+            return View();
+        }
+
+        //POST : /Teacher/Create
+        [HttpPost]
+        public ActionResult Create( string firstName, string lastName, string employeeNumber, string hireDate, decimal salary )
+        {
+            Teacher teacher = new Teacher();
+            teacher.firstName = firstName;
+            teacher.lastName = lastName;
+            teacher.employeeNumber = employeeNumber;
+            teacher.hireDate = Convert.ToDateTime( hireDate ); // "dd/mm/yyyy"
+
+            TeacherDataController controller = new TeacherDataController();
+            controller.addTeacher( teacher );
+
+            return RedirectToAction( "List" );
+        }
+
+
     }
 }

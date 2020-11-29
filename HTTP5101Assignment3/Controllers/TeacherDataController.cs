@@ -130,13 +130,15 @@ namespace HTTP5101Assignment3.Controllers
         [Route( "api/TeacherData/getTeacher/{id}" )]
         public Teacher getTeacher( int? id )
         {
-            return (Teacher) get( "teachers", "teacherid", id );
-        }
-
-        private IEnumerable<Class> getClasses( int id )
-        {
-            // TODO
-            return null;
+            Teacher teacher = (Teacher) get( "teachers", "teacherid", id );
+            ClassDataController contoller = new ClassDataController();
+            IEnumerable<SchoolObject> schoolObjects = contoller.findClasses( "classes.teacherid = " + id );
+            List<Class> classes = new List<Class>();
+            foreach( SchoolObject obj in schoolObjects ) {
+                classes.Add( (Class) obj );
+            }
+            teacher.courses = classes;
+            return teacher;
         }
 
         override
@@ -157,65 +159,49 @@ namespace HTTP5101Assignment3.Controllers
                 teacher.hireDate = reader.GetDateTime( reader.GetOrdinal( "hiredate" ) );
             }
 
-            // Get courses
-            teacher.courses = getClasses( teacher.teacherId );
-
             // Return the teacher object.
             return teacher;
         }
 
         /// <summary>
         /// Returns a list of Teacher objects constructed with data for each teacher
-        /// that matches the column name and value in the School database.
+        /// that matches the given condition in the School database.
         /// </summary>
-        /// <input>A string value that matches one of the column names in the teachers table.</input>
-        /// <input>A string value to match against values in that column.</input>
+        /// <input>A string value use in the WHERE clause of the query.</input>
         /// <returns>
-        /// A list of Teacher objects with the teachers' information if one or more 
-        /// teachers match the search criteria, otherwise an empty list. If either
-        /// columnName or columnValue is null, an empty list is returned.
+        /// A list of Teacher objects with the teachers' information if one or 
+        /// more teachers match the search criteria, otherwise an empty list. 
         /// </returns>
         /// <example>
-        /// GET api/TeacherData/getTeachers/{columnName}/{columnValue}
+        /// GET api/TeacherData/findTeachers/{condition}
         /// </example>
         /// <example>
-        /// GET api/TeacherData/getTeachers/teacherfname/Caitlin
-        /// </example>
-        /// <example>
-        /// GET api/TeacherData/getTeachers/
+        /// GET api/TeacherData/findTeachers/teacherfname=Caitlin
         /// </example>
         [HttpGet]
-        [Route( "api/TeacherData/getTeachers/{columnName}/{columnValue}" )]
-        public IEnumerable<Teacher> getTeachers( string columns, string conditions )
+        [Route( "api/TeacherData/findTeachers/{condition}" )]
+        public IEnumerable<Teacher> findTeachers( string condition )
         {
-            return (IEnumerable<Teacher>) find( "teachers", columns, conditions );
+            return (IEnumerable<Teacher>) find( "teachers", condition );
         }
 
         override
         protected IEnumerable<SchoolObject> getSearchResultsFromReader( MySqlDataReader reader )
         {
-            // There may be more than one result.
-            List<Teacher> teachers = new List<Teacher>();
-
-            // At the same time, there may be none. If not, return the empty list.
+            // If there are results, create a list. At this point the resulst contain
+            // all the columns, so we can resuse getListFromReader.
             if( reader.HasRows ) {
-                // Read the reader, one row at a time.
-                while( reader.Read() ) {
-                    Teacher teacher = new Teacher();
-
-                    teacher.employeeNumber = reader[ "employeenumber" ].ToString();
-                    teacher.firstName = reader[ "teacherfname" ].ToString();
-                    teacher.lastName = reader[ "teacherlname" ].ToString();
-                    teacher.teacherId = reader.GetInt32( reader.GetOrdinal( "teacherid" ) );
-                    teacher.salary = reader.GetDecimal( reader.GetOrdinal( "salary" ) );
-                    teacher.hireDate = reader.GetDateTime( reader.GetOrdinal( "hiredate" ) );
-
-                    teachers.Add( teacher );
-                }
+                return getListFromReader( reader );
             }
 
-            // Return the list of teachers.
-            return teachers;
+            // Return an empty list.
+            return new List<Teacher>();
         }
+
+        public int addTeacher( Teacher teacher )
+        {
+            return add( "teachers", teacher.getProperties() );
+        }
+
     }
 }

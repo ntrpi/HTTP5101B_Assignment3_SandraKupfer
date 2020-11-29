@@ -3,5 +3,34 @@
     ViewBag.Title = "Add";
 }
 
-<h2>Add</h2>
+<h2>Add New Teacher</h2>
 
+<div>
+    <form method="POST" action="/Teacher/Create">
+        <div class="inputrow">
+            <label for="firstName">First Name:</label>
+            <input type="text" id="firstName" name="firstName" />
+
+        </div>
+        <div class="inputrow">
+            <label for="lastName">Last Name:</label>
+            <input type="text" id="lastName" name="lastName" />
+
+        </div>
+        <div class="inputrow">
+            <label for="employeeNumber">EmployeeNumber:</label>
+            <input type="text" id="employeeNumber" name="employeeNumber" />
+        </div>
+        <div class="inputrow">
+            <label for="hireDate">Date Hired:</label>
+            <input type="date" id="hireDate" name="hireDate" />
+        </div>
+        <div class="inputrow">
+            <label for="salary">Salary ($):</label>
+            <input type="number" min="0" value="0" step=".01" id="salary" name="salary" />
+        </div>
+        <div class="inputrow">
+            <input type="submit" value="Add" />
+        </div>
+    </form>
+</div>

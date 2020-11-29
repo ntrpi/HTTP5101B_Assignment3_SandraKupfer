@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Text;
 using System.Web.Http;
 using HTTP5101Assignment3.Models;
 using MySql.Data.MySqlClient;
@@ -38,6 +41,16 @@ namespace HTTP5101Assignment3.Controllers
                 Console.Write( e );
                 return null;
             }
+        }
+
+        public bool ifColumnExists( MySqlDataReader reader, string columnName )
+        {
+            for( int i = 0; i < reader.FieldCount; i++ ) {
+                if( reader.GetName( i ).Equals( columnName, StringComparison.InvariantCultureIgnoreCase ) ) {
+                    return true;
+                }
+            }
+            return false;
         }
 
         protected abstract IEnumerable<SchoolObject> getListFromReader( MySqlDataReader reader );
@@ -137,10 +150,14 @@ namespace HTTP5101Assignment3.Controllers
             // Create and set a query for the database that will retrieve
             // the all the data from the given table.
             MySqlCommand command = connection.CreateCommand();
+            /* TODO: why doesn't this work?
             command.CommandText = "SELECT * FROM @table WHERE @column = @id";
             command.Parameters.AddWithValue( "@table", table );
             command.Parameters.AddWithValue( "@column", column );
             command.Parameters.AddWithValue( "@id", id );
+            */
+            command.CommandText = "SELECT * FROM "
+                + table + " WHERE " + column + " = " + id + ";";
             command.Prepare();
 
             // Create a and object to hold the results of the command
@@ -166,25 +183,34 @@ namespace HTTP5101Assignment3.Controllers
         /// that matches the condition string in the School database.
         /// </summary>
         /// <input>The name of the table.</input>
-        /// <input>A string value that contains one or more of the column names 
-        /// in the given table.</input>
-        /// <input>A string value to match against values in those columns.</input>
+        /// <input>A string value to use in the WHERE clause.</input>
         /// <returns>
         /// A list of SchoolObjects if one or more items match the search criteria, 
-        /// otherwise an empty list. If either
-        /// columnName or columnValue is null, an empty list is returned.
+        /// otherwise an empty list. If either table is null, null is returned.
         /// </returns>
         /// <example>
-        /// GET api/SchoolObjectData/find/{table}/{columns}/{condition}
+        /// GET api/SchoolObjectData/find/{table}/{condition}
         /// </example>
         /// <example>
+        /// GET api/SchoolObjectData/find/teachers/teacherid=4
         /// </example>
         /// <example>
         /// </example>
         [HttpGet]
-        [Route( "api/SchoolObjectData/find/{table}/{columns}/{condition}" )]
-        protected IEnumerable<SchoolObject> find( string table, string columns, string condition )
+        [Route( "api/SchoolObjectData/find/{table}/{condition}" )]
+        protected IEnumerable<SchoolObject> find( string table, string condition )
         {
+            // Validate the table.
+            if( table == null ) {
+                return null;
+            }
+
+            // Validate the condition.
+            if( condition == null ) {
+                condition = "1";
+            }
+
+
             // Create and open a connection to the database.
             MySqlConnection connection = getConnection();
             if( connection == null ) {
@@ -196,10 +222,17 @@ namespace HTTP5101Assignment3.Controllers
             // Create and set a query for the database that will retrieve
             // the all the data from the given table.
             MySqlCommand command = connection.CreateCommand();
-            command.CommandText = "SELECT @columns FROM @table WHERE @condition";
+
+            /* TODO: why doesn't this work?
+            command.CommandText = "SELECT * FROM @table WHERE @condition";
             command.Parameters.AddWithValue( "@table", table );
-            command.Parameters.AddWithValue( "@columns", columns );
             command.Parameters.AddWithValue( "@condition", condition );
+            */
+            command.CommandText = "SELECT * FROM " 
+                + table
+                + " WHERE "
+                + condition
+                + ";";
             command.Prepare();
 
             // Create a and object to hold the results of the command
@@ -216,6 +249,57 @@ namespace HTTP5101Assignment3.Controllers
 
             // Return the list.
             return list;
+        }
+
+        // TODO: comments
+        protected int add( string table, OrderedDictionary properties )
+        {
+            if( table == null || properties == null ) {
+                return -1;
+            }
+
+            // Create and open a connection to the database.
+            MySqlConnection connection = getConnection();
+            if( connection == null ) {
+
+                // Return -1 if the connection was not successful.
+                return -1;
+            }
+
+            // Create and set a query for the database that will insert
+            // all the values for the given table row.
+            // Construct the query.
+            StringBuilder query = new StringBuilder();
+            query.Append( "INSERT INTO " ).Append( table ).Append( "( " );
+
+            // Get the property names and values.
+            StringBuilder columns = new StringBuilder();
+            StringBuilder values = new StringBuilder();
+            foreach( DictionaryEntry entry in properties ) {
+                columns.Append( entry.Key ).Append( ", " );
+                values.Append( '"' ).Append( entry.Value ).Append( "\", " );
+            }
+
+            // Shave the trailing comma and space.
+            columns.Length -= 2;
+            values.Length -= 2;
+
+            // Add to the query.
+            query.Append( columns.ToString() ).Append( ") VALUES ( " ).Append( values.ToString() ).Append( " );" );
+
+            // Set the command.
+            MySqlCommand command = connection.CreateCommand();
+            command.CommandText = query.ToString();
+            command.Prepare();
+
+            // Create a and object to hold the results of the command
+            // and execute.
+            int result = command.ExecuteNonQuery();
+
+            // Close the connection to the database.
+            connection.Close();
+
+            return result;
         }
 
     }
