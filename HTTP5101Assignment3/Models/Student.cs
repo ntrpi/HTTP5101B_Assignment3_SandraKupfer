@@ -12,22 +12,29 @@ namespace HTTP5101Assignment3.Models
         public string studentFName;
         public string studentLName;
         public string studentNumber;
-        public DateTime enrolDate;
+        public DateTime enrollDate;
+
+        public IEnumerable<Class> courses;
 
         public OrderedDictionary getProperties()
         {
             OrderedDictionary properties = new OrderedDictionary();
-
-
+            properties.Add( "studentId", studentId );
+            properties.Add( "studentFName", studentFName );
+            properties.Add( "studentLName", studentLName );
+            properties.Add( "studentNumber", studentNumber );
+            properties.Add( "enrolDate", enrollDate.ToString( "yyyy-MM-dd HH-mm-ss" ) );
             return properties;
         }
 
-        public IEnumerable<String> getPropertyList()
+        public IEnumerable<string> getPropertyNames()
         {
-            List<String> classes = new List<string>();
-
-            return classes;
+            throw new NotImplementedException();
         }
 
+        public IEnumerable<string> getPropertyList( string property )
+        {
+            throw new NotImplementedException();
+        }
     }
 }

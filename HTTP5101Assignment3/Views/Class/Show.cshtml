@@ -1,0 +1,35 @@
+﻿@model HTTP5101Assignment3.Models.Class
+
+@{
+    ViewBag.Title = "Show";
+}
+
+        public int classId;
+        public string classCode;
+        public int teacherId;
+        public DateTime startDate;
+        public DateTime finishDate;
+        public string className;
+
+<h2>Class</h2>
+
+
+@if( Model == null || Model.classCode == null ) {
+    <div><strong>There are no classes with that ID.</strong></div>
+
+} else {
+<div>
+    <h3>@Model.className</h3>
+    <p><strong>Class Code:</strong> @Model.classCode</p>
+    <p><strong>Start Date:</strong> @Model.startDate</p>
+    <p><strong>Finish Date:</strong> @Model.finishDate</p>
+    <p><strong>Teacher ID:</strong> @Model.teacherId</p>
+    <div style="margin-top: 40px">
+        <a href="/Class/ConfirmDelete/@Model.classId"><strong>Delete Class</strong></a>
+    </div>
+</div>
+}
+
+<div style="margin-top: 40px">
+    <a href="/Assignment4"><strong>Back to Assignment Page</strong></a>
+</div>

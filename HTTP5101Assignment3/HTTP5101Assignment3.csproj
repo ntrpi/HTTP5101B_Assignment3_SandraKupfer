@@ -204,17 +204,24 @@
     <Compile Include="Areas\HelpPage\SampleGeneration\SampleDirection.cs" />
     <Compile Include="Areas\HelpPage\SampleGeneration\TextSample.cs" />
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
+    <Compile Include="Controllers\Assignment4Controller.cs" />
     <Compile Include="Controllers\ClassController.cs" />
     <Compile Include="Controllers\ClassDataController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\SchoolObjectDataController.cs" />
+    <Compile Include="Controllers\StudentController.cs" />
+    <Compile Include="Controllers\StudentDataController.cs" />
     <Compile Include="Controllers\TeacherController.cs" />
     <Compile Include="Controllers\TeacherDataController.cs" />
     <Compile Include="Controllers\ValuesController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\AddError.cs" />
     <Compile Include="Models\Class.cs" />
+    <Compile Include="Models\ErrorMessage.cs" />
+    <Compile Include="Models\MaxId.cs" />
+    <Compile Include="Models\MaxIds.cs" />
     <Compile Include="Models\SchoolDbContext.cs" />
     <Compile Include="Models\SchoolObject.cs" />
     <Compile Include="Models\Student.cs" />
@@ -276,11 +283,23 @@
     <Content Include="Views\Teacher\index.cshtml" />
     <Content Include="Views\Teacher\Results.cshtml" />
     <Content Include="Views\Teacher\Add.cshtml" />
-    <Content Include="Views\Shared\ConfirmDelete.cshtml" />
+    <Content Include="Views\Teacher\ConfirmDelete.cshtml" />
+    <Content Include="Views\Student\Show.cshtml" />
+    <Content Include="Views\Assignment4\Index.cshtml" />
+    <Content Include="Views\Class\Show.cshtml" />
+    <Content Include="Views\Class\Add.cshtml" />
+    <Content Include="Views\Class\ConfirmDelete.cshtml" />
+    <Content Include="Views\Class\List.cshtml" />
+    <Content Include="Views\Class\Results.cshtml" />
+    <Content Include="Views\Student\Add.cshtml" />
+    <Content Include="Views\Student\ConfirmDelete.cshtml" />
+    <Content Include="Views\Student\List.cshtml" />
+    <Content Include="Views\Student\Results.cshtml" />
+    <Content Include="Views\Teacher\ConfirmDeleteClasses.cshtml" />
+    <Content Include="Views\Assignment4\ShowError.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Views\Class\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />

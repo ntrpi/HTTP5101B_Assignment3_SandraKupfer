@@ -1,0 +1,31 @@
+﻿@model HTTP5101Assignment3.Models.Class
+
+@{
+    ViewBag.Title = "ConfirmDelete";
+}
+
+<h2>Confirm Delete</h2>
+
+<div id="containershow">
+    <nav>
+        <a class="navlink" href="/Class/Show/@Model.classId">Cancel</a>
+    </nav>
+    <p style="font: bold 2em arial, verdana">Are you sure you want to delete @Model.className?</p>
+    <p style="font-weight: bold">This action cannot be undone.</p>
+    <div style="display:flex; flex-direction:row;">
+        <!-- TODO: fix this into one form. -->
+        <form method="POST" action="/Class/Delete/@Model.classId">
+            <button class="delbutton" style="margin: 1em">
+                Confirm Delete
+            </button>
+        </form>
+        <form method="POST" action="/Class/">
+            <button class="delbutton" style="margin: 1em; background-color: #ffa29f;">
+                <strong>Cancel</strong>
+            </button>
+        </form>
+    </div>
+
+</div>
+
+

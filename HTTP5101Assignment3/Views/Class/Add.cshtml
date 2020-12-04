@@ -1,0 +1,36 @@
+﻿
+@{
+    ViewBag.Title = "Add";
+}
+
+<h2>Add New Class</h2>
+
+<div>
+    <form method="POST" action="/Class/Create">
+        <div class="inputrow">
+            <label for="className">Class Name:</label>
+            <input type="text" id="className" name="className" />
+
+        </div>
+        <div class="inputrow">
+            <label for="classCode">Class Code:</label>
+            <input type="text" id="classCode" name="classCode" />
+
+        </div>
+        <div class="inputrow">
+            <label for="teacherId">Teacher Id:</label>
+            <input type="number" id="teacherId" name="teacherId" />
+        </div>
+        <div class="inputrow">
+            <label for="startDate">Start Date:</label>
+            <input type="date" id="startDate" name="startDate" />
+        </div>
+        <div class="inputrow">
+            <label for="finishDate">Finish Date:</label>
+            <input type="date" id="finishDate" name="finishDate" />
+        </div>
+        <div class="inputrow">
+            <input type="submit" value="Add" />
+        </div>
+    </form>
+</div>

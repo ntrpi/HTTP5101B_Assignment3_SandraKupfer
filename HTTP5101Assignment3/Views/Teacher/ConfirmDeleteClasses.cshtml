@@ -1,0 +1,44 @@
+﻿@model IEnumerable<HTTP5101Assignment3.Models.Class>
+
+@{
+    ViewBag.Title = "DeleteClasses";
+}
+
+<h2>Delete Classes</h2>
+
+@if( Model == null || Model.Count() == 0 ) {
+    <div><strong>There are no classes taught by that teacher.</strong></div>
+} else {
+    <div id="containershow">
+        <p style="font: bold 2em arial, verdana">Do you want delete the classes taught by that teacher as well?</p>
+        <div>
+            @foreach( var c in Model ) {
+
+                <!-- Again, styling is an issue here.-->
+                <div style="padding: 10px 0; font-size:1.5em">
+                    <a href="/Class/Show/@c.classId"><strong>@c.className</strong></a>
+                </div>
+            }
+        </div>
+        <p style="font-weight: bold">This action cannot be undone.</p>
+        <div style="display:flex; flex-direction:row;">
+            <!-- TODO: fix this into one form. -->
+            <form method="POST" action="/Class/DeleteClasses/teacherId/@Model.First().teacherId">
+                <button class="delbutton" style="margin: 1em">
+                    Confirm Delete
+                </button>
+            </form>
+            <form method="POST" action="/Class/">
+                <button class="delbutton" style="margin: 1em; background-color: #ffa29f;">
+                    <strong>Cancel</strong>
+                </button>
+            </form>
+        </div>
+    </div>
+}
+
+<div style="margin-top: 40px">
+    <a href="/Assignment4"><strong>Back to Main Page</strong></a>
+</div>
+
+

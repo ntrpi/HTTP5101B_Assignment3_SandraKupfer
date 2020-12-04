@@ -1,0 +1,33 @@
+﻿<!-- A View which uses server rendering to display students from
+the MySQL Database -->
+
+@model IEnumerable<HTTP5101Assignment3.Models.Student>
+
+@{
+    ViewBag.Title = "List";
+}
+
+<h2>Students</h2>
+<h3>
+    This page shows a list of all the students in the database.
+</h3>
+
+
+@if( Model == null || Model.Count() == 0 ) {
+    <div><strong>There are no students in the database.</strong></div>
+} else {
+    <div>
+        @foreach( var student in Model ) {
+
+            <div>
+                <a href="/Student/Show/@student.studentId">@student.studentFName @student.studentLName</a>
+            </div>
+        }
+    </div>
+}
+
+<div style="margin-top: 40px">
+    <a href="/Assignment4"><strong>Back to Assignment Page</strong></a>
+</div>
+
+

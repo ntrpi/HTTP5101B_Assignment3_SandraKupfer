@@ -9,17 +9,18 @@
 @if( Model == null || Model.Count() == 0 ) {
     <div><strong>There are no teachers that match that search criteria.</strong></div>
 } else {
-    <div>
+<div>
     @foreach( var teacher in Model ) {
 
         <!-- Again, styling is an issue here.-->
-        <div style="padding: 20px 0"><a href="/Teacher/Show/@teacher.teacherId"><strong>@teacher.firstName @teacher.lastName</strong></a>
+        <div style="padding: 10px 0; font-size:1.5em">
+            <a href="/Teacher/Show/@teacher.teacherId"><strong>@teacher.teacherFName @teacher.teacherLName</strong></a>
         </div>
     }
-    </div>
+</div>
 }
 
 <div style="margin-top: 40px">
-    <a href="/Teacher"><strong>Back to Main Page</strong></a>
+    <a href="/Assignment4"><strong>Back to Main Page</strong></a>
 </div>
 

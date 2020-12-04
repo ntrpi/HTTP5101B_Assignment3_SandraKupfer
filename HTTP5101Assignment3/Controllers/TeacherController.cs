@@ -19,8 +19,7 @@ namespace HTTP5101Assignment3.Controllers
         [HttpGet]
         public ActionResult Index()
         {
-            TeacherDataController controller = new TeacherDataController();
-            return View( controller.getHighestTeacherId() );
+            return View( new TeacherDataController().getHighestId() );
         }
 
         /// <summary>
@@ -93,25 +92,47 @@ namespace HTTP5101Assignment3.Controllers
         public ActionResult Results( string columnName, string columnValue )
         {
             TeacherDataController controller = new TeacherDataController();
-            IEnumerable<Teacher> teachers = controller.findTeachers( columnName + "LIKE" + columnValue );
+            IEnumerable<Teacher> teachers = controller.findTeachers( columnName + " LIKE \"" + columnValue + "\"" );
             return View( teachers );
         }
 
-
+        [HttpGet]
         public ActionResult Add()
         {
             return View();
+        }
+
+        private ActionResult getRedirectToError( string property )
+        {
+            return RedirectToAction( "ShowError", "Assignment4", new {
+                objectType = "teacher",
+                property = property
+            } );
         }
 
         //POST : /Teacher/Create
         [HttpPost]
         public ActionResult Create( string firstName, string lastName, string employeeNumber, string hireDate, decimal salary )
         {
+            if( firstName == null || firstName.Length == 0 ) {
+                return getRedirectToError( "first name" );
+
+            } else if( lastName == null || lastName.Length == 0 ) {
+                return getRedirectToError( "last name" );
+
+            } else if( employeeNumber == null || employeeNumber.Length == 0 ) {
+                return getRedirectToError( "employee number" );
+
+            } else if( hireDate == null ) {
+                return getRedirectToError( "hire date" );
+            }
+
             Teacher teacher = new Teacher();
-            teacher.firstName = firstName;
-            teacher.lastName = lastName;
+            teacher.teacherFName = firstName;
+            teacher.teacherLName = lastName;
             teacher.employeeNumber = employeeNumber;
             teacher.hireDate = Convert.ToDateTime( hireDate ); // "dd/mm/yyyy"
+            teacher.salary = salary;
 
             TeacherDataController controller = new TeacherDataController();
             controller.addTeacher( teacher );
@@ -119,6 +140,23 @@ namespace HTTP5101Assignment3.Controllers
             return RedirectToAction( "List" );
         }
 
+        //GET : /Teacher/ConfirmDelete/{id}
+        public ActionResult ConfirmDelete( int id )
+        {
+            TeacherDataController controller = new TeacherDataController();
+            Teacher teacher = (Teacher) controller.findTeachers( "teacherid=" + id ).First();
+
+            return View( teacher );
+        }
+
+        //POST : /Teacher/Delete/{id}
+        [HttpPost]
+        public ActionResult Delete( int id )
+        {
+            TeacherDataController controller = new TeacherDataController();
+            controller.deleteTeacher( id );
+            return RedirectToAction( "List" );
+        }
 
     }
 }

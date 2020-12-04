@@ -3,10 +3,10 @@
     ViewBag.Title = "Add";
 }
 
-<h2>Add New Teacher</h2>
+<h2>Add New Student</h2>
 
 <div>
-    <form method="POST" action="/Teacher/Create">
+    <form method="POST" action="/Student/Create">
         <div class="inputrow">
             <label for="firstName">First Name:</label>
             <input type="text" id="firstName" name="firstName" />
@@ -18,16 +18,12 @@
 
         </div>
         <div class="inputrow">
-            <label for="employeeNumber">Employee Number:</label>
-            <input type="text" id="employeeNumber" name="employeeNumber" />
+            <label for="studentNumber">Student Number:</label>
+            <input type="text" id="studentNumber" name="studentNumber" />
         </div>
         <div class="inputrow">
-            <label for="hireDate">Date Hired:</label>
-            <input type="date" id="hireDate" name="hireDate" />
-        </div>
-        <div class="inputrow">
-            <label for="salary">Salary ($):</label>
-            <input type="number" min="0" value="0" step=".01" id="salary" name="salary" />
+            <label for="enrollDate">Date Enrolled:</label>
+            <input type="date" id="enrollDate" name="enrollDate" />
         </div>
         <div class="inputrow">
             <input type="submit" value="Add" />

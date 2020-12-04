@@ -1,0 +1,131 @@
+﻿@model HTTP5101Assignment3.Models.MaxIds
+@{
+    ViewBag.Title = "index";
+}
+
+<div class="jumbotron">
+    <h1 style="font-size: 2em">HTTP5101 B Assignment 4</h1>
+    <p class="lead">Adding CRUD functionality to our dynamic web page.</p>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <h2>Teachers</h2>
+        <div style="padding: 20px">
+            <h4>Find a Teacher</h4>
+            <form action="/Teacher/Show" method="POST">
+                <label for="teacherId">Search by ID: </label>
+                <input id="teacherId" name="teacherId" type="number" min="1" max="@Model.teacherMaxId" />
+                <input type="submit" value="Go" />
+            </form>
+        </div>
+        <div style="padding: 20px">
+            <h4>Advanced Search</h4>
+            <form action="/Teacher/Results" method="POST">
+                <div>
+                    <label for="columnName">Select a property: </label>
+                    <select name="columnName" id="columnName">
+                        <option selected="selected" value="teacherfname">First Name</option>
+                        <option value="teacherlname">Last Name</option>
+                        <option value="employeenumber">Employee Number</option>
+                        <option value="hiredate">Hire Date</option>
+                        <option value="salary">Salary</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="columnValue">Value: </label>
+                    <input id="columnValue" name="columnValue" type="text" value="Name" />
+                </div>
+                <input type="submit" value="Go" />
+            </form>
+        </div>
+        <div style="padding: 20px">
+            <h4>All Teachers</h4>
+            <form action="/Teacher/List" method="GET">
+                <label for="listTeachers">View all teachers: </label>
+                <input id="listTeachers" name="listTeachers" type="submit" value="Go" />
+            </form>
+        </div>
+        <div style="padding: 20px">
+            <p><a class="btn btn-default" href="/Teacher/Add" style="background-color: #ffa29f">Add New Teacher</a></p>
+        </div>
+     </div> <!-- end teachers column -->
+    <div class="col-md-4">
+        <h2>Students</h2>
+        <div style="padding: 20px">
+            <h4>Find a Student</h4>
+            <form action="/Student/Show" method="POST">
+                <label for="studentId">Search by ID: </label>
+                <input id="studentId" name="studentId" type="number" min="1" max="@Model.studentMaxId" />
+                <input type="submit" value="Go" />
+            </form>
+        </div>
+        <div style="padding: 20px">
+            <h4>Advanced Search</h4>
+            <form action="/Student/Results" method="POST">
+                <div>
+                    <label for="columnName">Select a property: </label>
+                    <select name="columnName" id="columnName">
+                        <option selected="selected" value="studentfname">First Name</option>
+                        <option value="studentlname">Last Name</option>
+                        <option value="studentnumber">Student Number</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="columnValue">Value: </label>
+                    <input id="columnValue" name="columnValue" type="text" value="Name" />
+                    <input type="submit" value="Go" />
+                </div>
+            </form>
+        </div>
+        <div style="padding: 20px">
+            <h4>All Students</h4>
+            <form action="/Student/List" method="GET">
+                <label for="listStudents">View all students: </label>
+                <input id="listStudents" name="listStudents" type="submit" value="Go" />
+            </form>
+        </div>
+        <div style="padding: 20px">
+            <p><a class="btn btn-default" href="/Student/Add" style="background-color: #ffa29f">Add New Student</a></p>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <h2>Classes</h2>
+        <div style="padding: 20px">
+            <h4>Find a Class</h4>
+            <form action="/Class/Show" method="POST">
+                <label for="classtId">Search by ID: </label>
+                <input id="classId" name="classId" type="number" min="1" max="@Model.classMaxId" />
+                <input type="submit" value="Go" />
+            </form>
+        </div>
+        <div style="padding: 20px">
+            <h4>Advanced Search</h4>
+            <form action="/Class/Results" method="POST">
+                <div>
+                    <label for="columnName">Select a property: </label>
+                    <select name="columnName" id="columnName">
+                        <option selected="selected" value="className">Class Name</option>
+                        <option value="classCode">Class Code</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="columnValue">Value: </label>
+                    <input id="columnValue" name="columnValue" type="text" value="Name" />
+                </div>
+                <input type="submit" value="Go" />
+            </form>
+        </div>
+        <div style="padding: 20px">
+            <h4>All Classes</h4>
+            <form action="/Class/List" method="GET">
+                <label for="listClasses">View all classs: </label>
+                <input id="listClasses" name="listClasses" type="submit" value="Go" />
+            </form>
+        </div>
+        <div style="padding: 20px">
+            <p><a class="btn btn-default" href="/Class/Add" style="background-color: #ffa29f">Add New Class</a></p>
+        </div>
+    </div>
+    </div>
+

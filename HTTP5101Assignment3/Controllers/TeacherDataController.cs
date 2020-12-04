@@ -16,51 +16,19 @@ namespace HTTP5101Assignment3.Controllers
 
     public class TeacherDataController: SchoolObjectDataController
     {
-        /// <summary>
-        /// This function is called in order to determine the highest teacher ID
-        /// in the database for validation in the feature allowing the user to 
-        /// find a specific teacher by their ID.
-        /// </summary>
-        /// <returns>A positive integer that represents the highest teacher ID in
-        /// the database, or a 0 if unable to connect to the database.
-        /// </returns>
-        /// <example>
-        /// GET api/TeacherData/getHighestTeacherId
-        /// </example>
-        [HttpGet]
-        public Teacher.MaxId getHighestTeacherId()
+        private string tableName = "teachers";
+        private string idColumnName = "teacherId";
+
+        override
+        protected string getTableName()
         {
-            // Create and open a connection to the database.
-            MySqlConnection connection = getConnection();
-            if( connection == null ) {
+            return tableName;
+        }
 
-                // Return 0 if the connection was not successful.
-                return new Teacher.MaxId(0);
-            }
-
-            // Create and set a query for the database that will retrieve
-            // the teachers' first and last names.
-            MySqlCommand command = connection.CreateCommand();
-            command.CommandText = "SELECT teacherid FROM teachers ORDER BY teacherid DESC LIMIT 1";
-
-            // Create a and object to hold the reader of the command
-            // and execute.
-            MySqlDataReader reader = command.ExecuteReader();
-
-            // Declare an int to hold the highest id. Initialize it to
-            // 0.
-            int maxTeacherId = 0;
-
-            // Read the reader. There should be only one row.
-            while( reader.Read() ) {
-                maxTeacherId = reader.GetInt32( reader.GetOrdinal( "teacherid" ) );
-            }
-
-            // Close the connection.
-            connection.Close();
-
-            // Return the max teacher ID.
-            return new Teacher.MaxId( maxTeacherId );
+        override
+        protected string getIdColumnName()
+        {
+            return idColumnName;
         }
 
         /// <summary>
@@ -76,7 +44,7 @@ namespace HTTP5101Assignment3.Controllers
         [Route( "api/TeacherData/listTeachers" )]
         public IEnumerable<Teacher> listTeachers()
         {
-            return (IEnumerable<Teacher>) list( "teachers" );
+            return (IEnumerable<Teacher>) list();
         }
 
         override
@@ -85,25 +53,16 @@ namespace HTTP5101Assignment3.Controllers
             // Create a list object to hold the teacher names.
             List<Teacher> teachers = new List<Teacher>();
 
+            // Validate reader.
+            if( reader == null || !reader.HasRows ) {
+                return teachers;
+            }
+
             // Read the reader, one row at a time.
             while( reader.Read() ) {
 
-                // Create a new Teacher object.
-                Teacher teacher = new Teacher();
-
-                // The reader will have the same column names as
-                // the database since we did not alias them.
-                // Put the data in the corresponding field of the Teacher
-                // object.
-                teacher.employeeNumber = reader[ "employeenumber" ].ToString();
-                teacher.firstName = reader[ "teacherfname" ].ToString();
-                teacher.lastName = reader[ "teacherlname" ].ToString();
-                teacher.teacherId = reader.GetInt32( reader.GetOrdinal( "teacherid" ) );
-                teacher.salary = reader.GetDecimal( reader.GetOrdinal( "salary" ) );
-                teacher.hireDate = reader.GetDateTime( reader.GetOrdinal( "hiredate" ) );
-
                 // Add the teacher to the list.
-                teachers.Add( teacher );
+                teachers.Add( getTeacherFromReader( reader ) );
             }
 
             return teachers;
@@ -130,7 +89,7 @@ namespace HTTP5101Assignment3.Controllers
         [Route( "api/TeacherData/getTeacher/{id}" )]
         public Teacher getTeacher( int? id )
         {
-            Teacher teacher = (Teacher) get( "teachers", "teacherid", id );
+            Teacher teacher = (Teacher) get( id );
             ClassDataController contoller = new ClassDataController();
             IEnumerable<SchoolObject> schoolObjects = contoller.findClasses( "classes.teacherid = " + id );
             List<Class> classes = new List<Class>();
@@ -141,8 +100,7 @@ namespace HTTP5101Assignment3.Controllers
             return teacher;
         }
 
-        override
-        protected SchoolObject getObjectFromReader( MySqlDataReader reader )
+        private Teacher getTeacherFromReader( MySqlDataReader reader )
         {
             // Create a Teacher object for the function to return.
             // If no teacher was found, the members of the object
@@ -150,17 +108,27 @@ namespace HTTP5101Assignment3.Controllers
             Teacher teacher = new Teacher();
 
             // Read the reader. There should be only one row.
-            while( reader.Read() ) {
-                teacher.employeeNumber = reader[ "employeenumber" ].ToString();
-                teacher.firstName = reader[ "teacherfname" ].ToString();
-                teacher.lastName = reader[ "teacherlname" ].ToString();
-                teacher.teacherId = reader.GetInt32( reader.GetOrdinal( "teacherid" ) );
-                teacher.salary = reader.GetDecimal( reader.GetOrdinal( "salary" ) );
-                teacher.hireDate = reader.GetDateTime( reader.GetOrdinal( "hiredate" ) );
-            }
+            teacher.employeeNumber = reader[ "employeenumber" ].ToString();
+            teacher.teacherFName = reader[ "teacherfname" ].ToString();
+            teacher.teacherLName = reader[ "teacherlname" ].ToString();
+            teacher.teacherId = reader.GetInt32( reader.GetOrdinal( "teacherid" ) );
+            teacher.salary = reader.GetDecimal( reader.GetOrdinal( "salary" ) );
+            teacher.hireDate = reader.GetDateTime( reader.GetOrdinal( "hiredate" ) );
 
             // Return the teacher object.
             return teacher;
+        }
+
+        override
+        protected SchoolObject getObjectFromReader( MySqlDataReader reader )
+        {
+            // Validate reader.
+            if( reader == null || !reader.HasRows ) {
+                return null;
+            }
+
+            reader.Read();
+            return getTeacherFromReader( reader );
         }
 
         /// <summary>
@@ -182,25 +150,30 @@ namespace HTTP5101Assignment3.Controllers
         [Route( "api/TeacherData/findTeachers/{condition}" )]
         public IEnumerable<Teacher> findTeachers( string condition )
         {
-            return (IEnumerable<Teacher>) find( "teachers", condition );
+            return (IEnumerable<Teacher>) find( condition );
         }
 
         override
         protected IEnumerable<SchoolObject> getSearchResultsFromReader( MySqlDataReader reader )
         {
-            // If there are results, create a list. At this point the resulst contain
-            // all the columns, so we can resuse getListFromReader.
-            if( reader.HasRows ) {
-                return getListFromReader( reader );
+            // Validate reader.
+            if( reader == null || !reader.HasRows ) {
+                return null;
             }
 
-            // Return an empty list.
-            return new List<Teacher>();
+            // If there are results, create a list. At this point the resulst contain
+            // all the columns, so we can resuse getListFromReader.
+            return getListFromReader( reader );
         }
 
         public int addTeacher( Teacher teacher )
         {
-            return add( "teachers", teacher.getProperties() );
+            return add( teacher.getProperties() );
+        }
+
+        public int deleteTeacher( int id )
+        {
+            return delete( "teacherId=" + id );        
         }
 
     }

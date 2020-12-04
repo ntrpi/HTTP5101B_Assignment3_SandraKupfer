@@ -18,17 +18,23 @@ namespace HTTP5101Assignment3.Models
         public OrderedDictionary getProperties()
         {
             OrderedDictionary properties = new OrderedDictionary();
-
-
+            properties.Add( "classId", classId );
+            properties.Add( "classCode", classCode );
+            properties.Add( "teacherId", teacherId );
+            properties.Add( "startDate", startDate.ToString( "yyyy-MM-dd HH-mm-ss" ) );
+            properties.Add( "finishDate", finishDate.ToString( "yyyy-MM-dd HH-mm-ss" ) );
+            properties.Add( "className", className );
             return properties;
         }
 
-        public IEnumerable<String> getPropertyList()
+        public IEnumerable<string> getPropertyList( string property )
         {
-            List<String> students = new List<string>();
-
-            return students;
+            throw new NotImplementedException();
         }
 
+        public IEnumerable<string> getPropertyNames()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

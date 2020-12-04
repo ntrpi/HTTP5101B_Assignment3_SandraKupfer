@@ -11,37 +11,36 @@ namespace HTTP5101Assignment3.Models
     // teachers table in the School database. 
     public class Teacher : SchoolObject
     {
+        public int teacherId;
         public string employeeNumber;
         public DateTime hireDate;
         public decimal salary;
-        public string firstName;
-        public string lastName;
-        public int teacherId;
+        public string teacherFName;
+        public string teacherLName;
 
         public IEnumerable<Class> courses;
+
         public OrderedDictionary getProperties()
         {
             OrderedDictionary properties = new OrderedDictionary();
-
-
+            properties.Add( "teacherId", teacherId );
+            properties.Add( "employeeNumber", employeeNumber );
+            properties.Add( "hireDate", hireDate.ToString( "yyyy-MM-dd HH-mm-ss" ) );
+            properties.Add( "salary", salary );
+            properties.Add( "teacherFName", teacherFName );
+            properties.Add( "teacherLName", teacherLName );
             return properties;
         }
 
-        public IEnumerable<String> getPropertyList()
+        public IEnumerable<string> getPropertyList( string property )
         {
-            List<String> classes = new List<string>();
-
-            return classes;
+            throw new NotImplementedException();
         }
 
-        public class MaxId
+        public IEnumerable<string> getPropertyNames()
         {
-            public Int32 maxId;
-
-            public MaxId( int maxId )
-            {
-                this.maxId = maxId;
-            }
+            throw new NotImplementedException();
         }
+
     }
 }

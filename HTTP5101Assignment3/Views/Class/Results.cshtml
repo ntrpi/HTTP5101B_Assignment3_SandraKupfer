@@ -1,0 +1,26 @@
+﻿@model IEnumerable<HTTP5101Assignment3.Models.Class>
+
+@{
+    ViewBag.Title = "Results";
+}
+
+<h2>Search Results</h2>
+
+@if( Model == null || Model.Count() == 0 ) {
+    <div><strong>There are no classes that match that search criteria.</strong></div>
+} else {
+    <div>
+        @foreach( var c in Model ) {
+
+            <!-- Again, styling is an issue here.-->
+            <div style="padding: 10px 0; font-size:1.5em">
+                <a href="/Class/Show/@c.classId"><strong>@c.className</strong></a>
+            </div>
+        }
+    </div>
+}
+
+<div style="margin-top: 40px">
+    <a href="/Assignment4"><strong>Back to Main Page</strong></a>
+</div>
+
