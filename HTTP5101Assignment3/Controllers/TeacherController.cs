@@ -83,11 +83,7 @@ namespace HTTP5101Assignment3.Controllers
         /// <returns>A view with a potentially empty list of teachers.</returns>
         /// <example>Not sure how to show an example for this function since it
         /// uses a POST request. I can say that this function is accessed by
-        /// one of the forms in Teacher/index.cshtml.</example>
-        // NOTE: This is very crude search functionality, just the minimum to show
-        // that it can be done, a prototype as opposed to a full implementation. 
-        // The column names are fine as they are selected, not typed, but the values 
-        // could be anything. 
+        /// one of the forms in Assignment4/Index.cshtml.</example>
         [HttpPost]
         public ActionResult Results( string columnName, string columnValue )
         {
@@ -96,12 +92,22 @@ namespace HTTP5101Assignment3.Controllers
             return View( teachers );
         }
 
+        /// <summary>
+        /// Returns a View for Add.chtml.
+        /// </summary>
+        /// <returns>An Add View.</returns>
         [HttpGet]
         public ActionResult Add()
         {
             return View();
         }
 
+        /// <summary>
+        /// A utility function to create an ActionResult that will
+        /// redirect to an error page if validation for Create fails.
+        /// </summary>
+        /// <param name="property">The name of the property that is invalid.</param>
+        /// <returns>A RedirectToAction that will bring up the Assignment4/ShowError page.</returns>
         private ActionResult getRedirectToError( string property )
         {
             return RedirectToAction( "ShowError", "Assignment4", new {

@@ -92,12 +92,21 @@ namespace HTTP5101Assignment3.Controllers
             return View( students );
         }
 
-
+        /// <summary>
+        /// Returns a View for Add.chtml.
+        /// </summary>
+        /// <returns>An Add View.</returns>
         public ActionResult Add()
         {
             return View();
         }
 
+        /// <summary>
+        /// A utility function to create an ActionResult that will
+        /// redirect to an error page if validation for Create fails.
+        /// </summary>
+        /// <param name="property">The name of the property that is invalid.</param>
+        /// <returns>A RedirectToAction that will bring up the Assignment4/ShowError page.</returns>
         private ActionResult getRedirectToError( string property )
         {
             return RedirectToAction( "ShowError", "Assignment4", new {

@@ -41,17 +41,48 @@ namespace HTTP5101Assignment3.Controllers
             return connection;
         }
 
+        /// <summary>
+        /// Return a string that represents the implementing class's database
+        /// table name.
+        /// </summary>
+        /// <returns>Database table name</returns>
         protected abstract string getTableName();
 
+        /// <summary>
+        /// Return a string that represents name of the id column in the 
+        /// implementing class's database table.
+        /// </summary>
+        /// <returns>ID column name</returns>
         protected abstract string getIdColumnName();
 
+        /// <summary>
+        /// Each implementing class will construct a list of its associated
+        /// objects. For example, the TeacherDataController will return a list
+        /// of Teachers, constructed with the data from the reader.
+        /// </summary>
+        /// <param name="reader">A MySqlDataReader holding the results of a
+        /// MySql query.</param>
+        /// <returns>A list of the object that implements SchoolObject.</returns>
         protected abstract IEnumerable<SchoolObject> getListFromReader( MySqlDataReader reader );
 
+        /// <summary>
+        /// Each implementing class will one of its associated
+        /// objects. For example, the TeacherDataController will return a
+        /// Teacher object, constructed with the data from the reader.
+        /// </summary>
+        /// <param name="reader">A MySqlDataReader holding the results of a
+        /// MySql query.</param>
+        /// <returns>An object that implements SchoolObject.</returns>
         protected abstract SchoolObject getObjectFromReader( MySqlDataReader reader );
 
-        protected abstract IEnumerable<SchoolObject> getSearchResultsFromReader( MySqlDataReader reader );
-
-
+        /// <summary>
+        /// A utility function to modularize the execution of a MySql
+        /// query.
+        /// </summary>
+        /// <param name="query">The query string.</param>
+        /// <returns>If there is a problem connecting to the database,
+        /// -1 is returned. Otherwise, the value returned when the 
+        /// query is run is returned.</returns>
         private MySqlDataReader executeMySqlQuery( string query )
         {
             // Validate connection.
@@ -73,6 +104,14 @@ namespace HTTP5101Assignment3.Controllers
             return reader;
         }
 
+        /// <summary>
+        /// A utility function to modularize the execution of a MySql
+        /// non-query.
+        /// </summary>
+        /// <param name="nonQuery">The query string.</param>
+        /// <returns>If there is a problem connecting to the database,
+        /// -1 is returned. Otherwise, the value returned when the 
+        /// query is run is returned.</returns>
         private int executeMySqlNonQuery( string nonQuery )
         {
             // Validate connection.
@@ -142,18 +181,6 @@ namespace HTTP5101Assignment3.Controllers
             // Return the max teacher ID.
             return new MaxId( maxId );
         }
-
-        // TODO: use this to validate input and/or results.
-        public bool ifColumnExists( MySqlDataReader reader, string columnName )
-        {
-            for( int i = 0; i < reader.FieldCount; i++ ) {
-                if( reader.GetName( i ).Equals( columnName, StringComparison.InvariantCultureIgnoreCase ) ) {
-                    return true;
-                }
-            }
-            return false;
-        }
-
 
         /// <summary>
         /// Returns a list of requested items in the School database or null if 
@@ -282,7 +309,7 @@ namespace HTTP5101Assignment3.Controllers
             // Call the function implemented by the specific school object
             // create a list of the correct object type from the data
             // provided.
-            IEnumerable<SchoolObject> list = getSearchResultsFromReader( results );
+            IEnumerable<SchoolObject> list = getListFromReader( results );
 
             // Close the connection to the database.
             getConnection().Close();
@@ -291,7 +318,15 @@ namespace HTTP5101Assignment3.Controllers
             return list;
         }
 
-        // TODO: comments
+        /// <summary>
+        /// This is a utility function to assist with creating the query to
+        /// insert a new row into a School database table.
+        /// </summary>
+        /// <param name="properties">An OrderedDictionary that contains all of the 
+        /// single value properties of a SchoolObject. NOTE: it is expected that
+        /// the id property for the table is the first in the OrderedDictionary.</param>
+        /// <returns>The integer value returned when the function to execute the
+        /// query was called.</returns>
         protected int add( OrderedDictionary properties )
         {
             // Create a query for the database that will insert
@@ -330,7 +365,14 @@ namespace HTTP5101Assignment3.Controllers
             return result;
         }
 
-
+        /// <summary>
+        /// This is a utility function to assist with creating the query to
+        /// delete data from a School database table.
+        /// </summary>
+        /// <param name="condition">A string that will be used in the WHERE clause
+        /// of the DELETE query.</param>
+        /// <returns>The integer value returned when the function to execute the
+        /// query was called.</returns>
         public int delete( string condition )
         {
             // Create a query for the database that will retrieve

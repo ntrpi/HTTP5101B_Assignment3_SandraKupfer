@@ -153,19 +153,6 @@ namespace HTTP5101Assignment3.Controllers
             return (IEnumerable<Teacher>) find( condition );
         }
 
-        override
-        protected IEnumerable<SchoolObject> getSearchResultsFromReader( MySqlDataReader reader )
-        {
-            // Validate reader.
-            if( reader == null || !reader.HasRows ) {
-                return null;
-            }
-
-            // If there are results, create a list. At this point the resulst contain
-            // all the columns, so we can resuse getListFromReader.
-            return getListFromReader( reader );
-        }
-
         public int addTeacher( Teacher teacher )
         {
             return add( teacher.getProperties() );
