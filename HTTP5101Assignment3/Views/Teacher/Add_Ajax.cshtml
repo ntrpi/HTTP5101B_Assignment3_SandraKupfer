@@ -1,0 +1,53 @@
+﻿@{
+    ViewBag.Title = "Add AJAX";
+}
+
+
+<div id="containershow">
+    <h2>New Teacher</h2>
+    @{
+        /* AJAX Request to add teacher */
+        /* No form submission needed */
+        /* button onclick will handle form submission */
+        /* Each item has an ID for validation && ajax submission */
+
+
+    }
+    <div class="inputrow">
+        <label for="firstName">First Name:</label>
+        <input type="text" id="firstName" name="firstName" />
+
+    </div>
+    <div class="inputrow">
+        <label for="lastName">Last Name:</label>
+        <input type="text" id="lastName" name="lastName" />
+
+    </div>
+    <div class="inputrow">
+        <label for="employeeNumber">Employee Number:</label>
+        <input type="text" id="employeeNumber" name="employeeNumber" />
+    </div>
+    <div class="inputrow">
+        <label for="hireDate">Date Hired:</label>
+        <input type="date" id="hireDate" name="hireDate" />
+    </div>
+    <div class="inputrow">
+        <label for="salary">Salary ($):</label>
+        <input type="number" min="0" value="0" step=".01" id="salary" name="salary" />
+    </div>
+    @{
+        //AddTeacher() is a JS method defined in /Scripts/teachers.js
+    }
+    <button onclick="addTeacher();">Add</button>
+
+    <p style="margin-top: 40px; max-width: 500px">Unfortunately, when the JS tries to send the data to the data controller,
+    something goes wrong and the object sent to the function is null. I was not
+    able to correct this. But if you open up the inspector, you will see the JS
+     does perform the client-side validation when you click "Add".</p>
+
+    <div id="ErrorBox" style="display:none;"></div>
+
+    <div style="margin-top: 40px">
+        <a href="/Assignment4"><strong>Back to Assignment Page</strong></a>
+    </div>
+</div>

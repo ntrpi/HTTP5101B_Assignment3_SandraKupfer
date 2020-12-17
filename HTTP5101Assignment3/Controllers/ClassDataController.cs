@@ -97,19 +97,15 @@ namespace HTTP5101Assignment3.Controllers
         private Class getClassFromReader( MySqlDataReader reader )
         {
             // Create a Class object for the function to return.
-            // If no class was found, the members of the object
-            // will be uninitialized.
-            Class course = new Class();
+            // There should be only one row.
+            int id = (int) reader[ "classId" ];
+            string className = reader[ "className" ].ToString();
+            string classCode = reader[ "classCode" ].ToString();
+            int teacherId = (int) reader[ "teacherId" ];
+            string startDate = reader[ "startDate" ].ToString();
+            string finishDate = reader[ "finishDate" ].ToString();
 
-            // Read the reader. There should be only one row.
-            course.classCode = reader[ "classcode" ].ToString();
-            course.className = reader[ "classname" ].ToString();
-            course.classId= (int) reader[ "classId" ];
-            course.startDate = reader.GetDateTime(reader.GetOrdinal( "startdate" ) );
-            course.finishDate = reader.GetDateTime(reader.GetOrdinal( "finishdate" ) );
-
-            // Return the class object.
-            return course;
+            return new Class( id, className, classCode, teacherId, startDate, finishDate ); 
         }
 
         override
@@ -156,6 +152,10 @@ namespace HTTP5101Assignment3.Controllers
             return delete( "classId=" + id );
         }
 
+        public int updateClass( Class course )
+        {
+            return update( course.getProperties() );
+        }
 
     }
 }

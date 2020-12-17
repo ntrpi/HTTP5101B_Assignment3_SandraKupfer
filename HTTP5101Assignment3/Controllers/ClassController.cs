@@ -115,29 +115,25 @@ namespace HTTP5101Assignment3.Controllers
             } );
         }
 
+        /// <summary>
+        /// Add a new Class to the database using the parameters passed in.
+        /// Return an ActionResult that takes you to the list of students.
+        /// </summary>
+        /// <param name="className">The class name as a string.</param>
+        /// <param name="classCode">The class code as a string.</param>
+        /// <param name="startDate">The date the class starts.</param>
+        /// <param name="finishDate">The date the class ends.</param>
+        /// <param name="teacherId">The teacher's ID as an integer.</param>
+        /// <returns>RedirectToAction that takes you to the classes list.</returns>
         //POST : /Class/Create
         [HttpPost]
-        public ActionResult Create( string className, string classCode, DateTime startDate, DateTime finishDate, int teacherId )
+        public ActionResult Create( string className, string classCode, string startDate, string finishDate, int teacherId )
         {
-            if( className == null || className.Length == 0 ) {
-                return getRedirectToError( "class name" );
-
-            } else if( classCode == null || classCode.Length == 0 ) {
-                return getRedirectToError( "class code" );
-
-            } else if( startDate == null ) {
-                return getRedirectToError( "start date" );
-
-            } else if( finishDate == null ) {
-                return getRedirectToError( "finish date" );
+            Class course = new Class( className, classCode, teacherId, startDate, finishDate );
+            string propertyError = course.getPropertyError();
+            if( propertyError != null ) {
+                return getRedirectToError( propertyError );
             }
-
-            Class course = new Class();
-            course.className = className;
-            course.classCode = classCode;
-            course.startDate = Convert.ToDateTime( startDate ); // "dd/mm/yyyy"
-            course.finishDate = Convert.ToDateTime( finishDate ); // "dd/mm/yyyy"
-            course.teacherId = teacherId;
 
             controller.addClass( course );
 
@@ -170,6 +166,31 @@ namespace HTTP5101Assignment3.Controllers
             foreach( Class c in classes ) {
                 Delete( c.classId );
             }
+            return RedirectToAction( "List" );
+        }
+
+        /// <summary>
+        /// Update a Class in the database using the parameters passed in.
+        /// Return an ActionResult that takes you to the list of students.
+        /// </summary>
+        /// <param name="className">The class name as a string.</param>
+        /// <param name="classCode">The class code as a string.</param>
+        /// <param name="startDate">The date the class starts.</param>
+        /// <param name="finishDate">The date the class ends.</param>
+        /// <param name="teacherId">The teacher's ID as an integer.</param>
+        /// <returns>RedirectToAction that takes you to the classes list.</returns>
+        //POST : /Class/Create
+        [HttpPost]
+        public ActionResult Update( string className, string classCode, string startDate, string finishDate, int teacherId )
+        {
+            Class course = new Class( className, classCode, teacherId, startDate, finishDate );
+            string propertyError = course.getPropertyError();
+            if( propertyError != null ) {
+                return getRedirectToError( propertyError );
+            }
+
+            controller.updateClass( course );
+
             return RedirectToAction( "List" );
         }
 

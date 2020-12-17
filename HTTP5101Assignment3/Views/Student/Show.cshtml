@@ -10,20 +10,21 @@
     <div><strong>There are no students with that ID.</strong></div>
 
 } else {
-    <div>
-        <h3>@Model.studentFName @Model.studentLName</h3>
-        <p><strong>Student Number:</strong> @Model.studentNumber</p>
-        <p><strong>Student ID:</strong> @Model.studentId</p>
-        <p><strong>Courses:</strong></p>
-        <ul>
-            @foreach( var course in Model.courses ) {
-                <li>@course.className</li>
-            }
-        </ul>
-        <div style="margin-top: 40px">
-            <a href="/Student/ConfirmDelete/@Model.studentId"><strong>Delete Student</strong></a>
-        </div>
+<div>
+    <h3>@Model.studentFName @Model.studentLName</h3>
+    <p><strong>Student Number:</strong> @Model.studentNumber</p>
+    <p><strong>Student ID:</strong> @Model.studentId</p>
+    <p><strong>Courses:</strong></p>
+    <ul>
+        @foreach( var course in Model.courses ) {
+            <li>@course.className</li>
+        }
+    </ul>
+    <div style="margin-top: 40px">
+        <a class="btn btn-default" href="/Student/ConfirmDelete/@Model.studentId"><strong>Delete</strong></a>
+        <a class="btn btn-default" href="/Student/Edit/@Model.studentId"><strong>Edit</strong></a>
     </div>
+</div>
 }
 
 <div style="margin-top: 40px">

@@ -339,13 +339,18 @@ namespace HTTP5101Assignment3.Controllers
             StringBuilder columns = new StringBuilder();
             StringBuilder values = new StringBuilder();
             bool isFirst = true;
+            Decimal parse = new Decimal( 0 );
             foreach( DictionaryEntry entry in properties ) {
                 if( isFirst ) {
                     isFirst = false;
                     continue;
                 }
-                columns.Append( entry.Key ).Append( ", " );
-                values.Append( '"' ).Append( entry.Value ).Append( "\", " );
+                columns.Append( '`' ).Append( entry.Key ).Append( "`, " );
+                bool isNumber = Decimal.TryParse( entry.Value.ToString(), out parse );
+                values.Append( isNumber ? "" : "\"" )
+                    .Append( entry.Value )
+                    .Append( isNumber ? "" : "\"" )
+                    .Append( ", " );
             }
 
             // Shave the trailing comma and space.
@@ -354,6 +359,58 @@ namespace HTTP5101Assignment3.Controllers
 
             // Add to the query.
             query.Append( columns.ToString() ).Append( ") VALUES ( " ).Append( values.ToString() ).Append( " );" );
+
+            // Create a and object to hold the results of the command
+            // and execute.
+            int result = executeMySqlNonQuery( query.ToString() );
+
+            // Close the connection to the database.
+            getConnection().Close();
+
+            return result;
+        }
+
+        /// <summary>
+        /// This is a utility function to assist with creating the query to
+        /// update a row in a School database table.
+        /// </summary>
+        /// <param name="properties">An OrderedDictionary that contains all of the 
+        /// single value properties of a SchoolObject to be updated. NOTE: it is expected that
+        /// the id property for the table is the first in the OrderedDictionary.</param>
+        /// <returns>The integer value returned when the function to execute the
+        /// query was called.</returns>
+        protected int update( OrderedDictionary properties )
+        {
+            // Create a query for the database that will insert
+            // all the values for the given table row.
+            // Construct the query.
+            StringBuilder query = new StringBuilder();
+            query.Append( "UPDATE " ).Append( getTableName() ).Append( " SET " );
+
+            // Get the property names and values.
+            DictionaryEntry idEntry;
+            bool isFirst = true;
+            Decimal parse = new Decimal( 0 );
+            foreach( DictionaryEntry entry in properties ) {
+                if( isFirst ) {
+                    idEntry = entry;
+                    isFirst = false;
+                    continue;
+                }
+                bool isNumber = Decimal.TryParse( entry.Value.ToString(), out parse );
+                query.Append( entry.Key )
+                    .Append( "=" )
+                    .Append( isNumber ? "" : "\"" )
+                    .Append( entry.Value )
+                    .Append( isNumber ? "" : "\"" )
+                    .Append( "\", " );
+            }
+
+            // Shave the trailing comma and space.
+            query.Length -= 2;
+
+            // Add the WHERE clause.
+            query.Append( " WHERE " ).Append( idEntry.Key ).Append( "=" ).Append( idEntry.Value ).Append( ";" );
 
             // Create a and object to hold the results of the command
             // and execute.

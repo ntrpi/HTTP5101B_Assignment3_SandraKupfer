@@ -115,28 +115,50 @@ namespace HTTP5101Assignment3.Controllers
             } );
         }
 
+        /// <summary>
+        /// Update a Student in the database using the parameters passed in.
+        /// Return an ActionResult that takes you to the list of students.
+        /// </summary>
+        /// <param name="firstName">The student's first name as a string.</param>
+        /// <param name="lastName">The student's last name as a string.</param>
+        /// <param name="studentNumber">The student's number as a string.</param>
+        /// <param name="enrollDate">The date the student was enrolled as a string.</param>
+        /// <returns>RedirectToAction that takes you to the students list.</returns>
+        //POST : /Student/Update
+        [HttpPost]
+        public ActionResult Update( int id, string firstName, string lastName, string studentNumber, string enrollDate )
+        {
+            Student student = new Student( id, firstName, lastName, studentNumber, enrollDate );
+            string propertyError = student.getPropertyError();
+            if( propertyError != null ) {
+                return getRedirectToError( propertyError );
+            }
+
+            StudentDataController controller = new StudentDataController();
+            controller.updateStudent( student );
+
+            return RedirectToAction( "List" );
+        }
+
+
+        /// <summary>
+        /// Add a new Student to the database using the parameters passed in.
+        /// Return an ActionResult that takes you to the list of students.
+        /// </summary>
+        /// <param name="firstName">The student's first name as a string.</param>
+        /// <param name="lastName">The student's last name as a string.</param>
+        /// <param name="studentNumber">The student's student number as a string.</param>
+        /// <param name="enrollDate">The date the student was enrolled as a string.</param>
+        /// <returns>RedirectToAction that takes you to the students list.</returns>
         //POST : /Student/Create
         [HttpPost]
         public ActionResult Create( string firstName, string lastName, string studentNumber, string enrollDate )
         {
-            if( firstName == null || firstName.Length == 0 ) {
-                return getRedirectToError( "first name" );
-
-            } else if( lastName == null || lastName.Length == 0 ) {
-                return getRedirectToError( "last name" );
-
-            } else if( studentNumber == null || studentNumber.Length == 0 ) {
-                return getRedirectToError( "employee number" );
-
-            } else if( enrollDate == null ) {
-                return getRedirectToError( "enroll date" );
+           Student student = new Student( firstName, lastName, studentNumber, enrollDate );
+            string propertyError = student.getPropertyError();
+            if( propertyError != null ) {
+                return getRedirectToError( propertyError );
             }
-
-            Student student = new Student();
-            student.studentFName = firstName;
-            student.studentLName = lastName;
-            student.studentNumber = studentNumber;
-            student.enrollDate = Convert.ToDateTime( enrollDate ); // "dd/mm/yyyy"
 
             controller.addStudent( student );
 

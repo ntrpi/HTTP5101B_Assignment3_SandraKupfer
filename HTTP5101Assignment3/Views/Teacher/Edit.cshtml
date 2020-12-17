@@ -1,0 +1,43 @@
+﻿@model HTTP5101Assignment3.Models.Teacher
+
+@{
+    ViewBag.Title = "Edit";
+}
+
+<h2>Edit Teacher</h2>
+
+<div>
+    <form method="POST" action="/Teacher/Update">
+        <input id="id" name="id" style="display: none;" type="number" value="@Model.teacherId" />
+        <div class="inputrow">
+            <label for="firstName">First Name:</label>
+            <input type="text" id="firstName" name="firstName" value="@Model.teacherFName" />
+        </div>
+        <div class="inputrow">
+            <label for="lastName">Last Name:</label>
+            <input type="text" id="lastName" name="lastName" value="@Model.teacherLName" />
+        </div>
+        <div class="inputrow">
+            <label for="employeeNumber">Employee Number:</label>
+            <input type="text" id="employeeNumber" name="employeeNumber" value="@Model.employeeNumber" />
+        </div>
+        <div class="inputrow">
+            <label for="hireDate">Date Hired:</label>
+            <input type="date" id="hireDate" name="hireDate" value="@Model.hireDate.ToString( "yyyy-MM-dd" )" />
+        </div>
+        <div class="inputrow">
+            <label for="salary">Salary ($):</label>
+            <input type="number" min="0" value="@Model.salary" step=".01" id="salary" name="salary" />
+        </div>
+        <div class="inputrow">
+            <a class="btn btn-default" href="/Teacher/Show/@Model.teacherId" >Cancel</a>
+            <input class="btn btn-default" type="submit" value="Save" />
+        </div>
+    </form>
+</div>
+
+<div style="margin-top: 40px">
+    <a href="/Assignment4"><strong>Back to Assignment Page</strong></a>
+</div>
+
+

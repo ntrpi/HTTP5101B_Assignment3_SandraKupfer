@@ -98,18 +98,14 @@ namespace HTTP5101Assignment3.Controllers
         private Student getStudentFromReader( MySqlDataReader reader )
         {
             // Create a Student object for the function to return.
-            // If no student was found, the members of the object
-            // will be uninitialized.
-            Student student = new Student();
-
-            // Read the reader. There should be only one row.
-            student.studentNumber = reader[ "studentNumber" ].ToString();
-            student.studentFName = reader[ "studentfname" ].ToString();
-            student.studentLName = reader[ "studentlname" ].ToString();
-            student.studentId = reader.GetInt32( reader.GetOrdinal( "studentid" ) );
-
-            // Return the student object.
-            return student;
+            // There should be only one row.
+            return new Student(
+                reader.GetInt32( reader.GetOrdinal( "studentid" ) ),
+                reader[ "studentfname" ].ToString(),
+                reader[ "studentlname" ].ToString(),
+                reader[ "studentNumber" ].ToString(),
+                reader[ "enrolDate" ].ToString()
+            );
         }
 
         override
@@ -154,6 +150,11 @@ namespace HTTP5101Assignment3.Controllers
         public int deleteStudent( int id )
         {
             return delete( "studentId=" + id );
+        }
+
+        public int updateStudent( Student student )
+        {
+            return add( student.getProperties() );
         }
 
 

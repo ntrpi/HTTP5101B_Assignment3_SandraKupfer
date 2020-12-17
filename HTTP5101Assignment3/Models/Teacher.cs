@@ -20,6 +20,23 @@ namespace HTTP5101Assignment3.Models
 
         public IEnumerable<Class> courses;
 
+        public Teacher( int teacherId, string teacherFName, string teacherLName, string employeeNumber, string hireDate, decimal salary ) : this( teacherFName, teacherLName, employeeNumber, hireDate, salary )
+        {
+            this.teacherId = teacherId;
+        }
+
+        public Teacher( string teacherFName, string teacherLName, string employeeNumber, string hireDate, decimal salary )
+        {
+            this.teacherFName = teacherFName;
+            this.teacherLName = teacherLName;
+            this.employeeNumber = employeeNumber;
+            if( hireDate != null && !hireDate.Equals( "" ) ) {
+                this.hireDate = Convert.ToDateTime( hireDate ); // "dd/mm/yyyy"
+            }
+            this.salary = salary;
+        }
+
+
         public OrderedDictionary getProperties()
         {
             OrderedDictionary properties = new OrderedDictionary();
@@ -42,5 +59,21 @@ namespace HTTP5101Assignment3.Models
             throw new NotImplementedException();
         }
 
+        public string getPropertyError()
+        {
+            if( teacherFName == null || teacherFName.Length == 0 ) {
+                return "first name";
+
+            } else if( teacherLName == null || teacherLName.Length == 0 ) {
+                return "last name";
+
+            } else if( employeeNumber == null || employeeNumber.Length == 0 ) {
+                return "employee number";
+
+            } else if( hireDate == null ) {
+                return "hire date";
+            }
+            return null;
+        }
     }
 }

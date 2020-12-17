@@ -1,0 +1,40 @@
+﻿@model HTTP5101Assignment3.Models.Student
+
+@{
+    ViewBag.Title = "Edit";
+}
+
+<h2>Edit Student</h2>
+
+<div>
+    <form method="POST" action="/Student/Update">
+        <input id="id" name="id" style="display: none;" type="number" value="@Model.studentId" />
+        <div class="inputrow">
+            <label for="firstName">First Name:</label>
+            <input type="text" id="firstName" name="firstName" value="@Model.studentFName" />
+        </div>
+        <div class="inputrow">
+            <label for="lastName">Last Name:</label>
+            <input type="text" id="lastName" name="lastName" value="@Model.studentLName" />
+        </div>
+        <div class="inputrow">
+            <label for="studentNumber">Student Number:</label>
+            <input type="text" id="studentNumber" name="studentNumber" value="@Model.studentNumber" />
+        </div>
+        <div class="inputrow">
+            <label for="enrollDate">Date Hired:</label>
+            <input type="date" id="enrollDate" name="enrollDate" value="@Model.enrollDate.ToString( "yyyy-MM-dd" )" />
+        </div>
+        <div class="inputrow">
+            <a class="btn btn-default" href="/Student/Show/@Model.studentId">Cancel</a>
+            <input class="btn btn-default" type="submit" value="Save" />
+        </div>
+    </form>
+</div>
+
+}
+
+<div style="margin-top: 40px">
+    <a href="/Assignment4"><strong>Back to Assignment Page</strong></a>
+</div>
+

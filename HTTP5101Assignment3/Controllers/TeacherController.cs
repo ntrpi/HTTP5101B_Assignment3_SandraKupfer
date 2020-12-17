@@ -73,6 +73,60 @@ namespace HTTP5101Assignment3.Controllers
         }
 
         /// <summary>
+        /// Get information for the teacher with the given ID and send it to 
+        /// Edit.cshtml.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>A View containing a Teacher object.</returns>
+        /// <example>GET: /Teacher/Update/{id}</example>
+        // Note that because we modified the routing configuration in 
+        // App_Start/RouteConfig.cs, the name of the parameter we are
+        // taking in this function MUST match the name of the optional parameter
+        // in the routing configuration.
+        [HttpGet]
+        public ActionResult Edit( int id )
+        {
+            TeacherDataController controller = new TeacherDataController();
+            Teacher teacher = controller.getTeacher( id );
+            return View( teacher );
+        }
+
+        [HttpGet]
+        public ActionResult Edit_Ajax( int id )
+        {
+            TeacherDataController controller = new TeacherDataController();
+            Teacher teacher = controller.getTeacher( id );
+            return View( teacher );
+        }
+
+        /// <summary>
+        /// Update a Teacher in the database using the parameters passed in.
+        /// Return an ActionResult that takes you to the list of teachers.
+        /// </summary>
+        /// <param name="firstName">The teacher's first name as a string.</param>
+        /// <param name="lastName">The teacher's last name as a string.</param>
+        /// <param name="employeeNumber">The teacher's employee number as a string.</param>
+        /// <param name="hireDate">The date the teacher was hired as a string.</param>
+        /// <param name="salary">A decimal holding the teacher's salary.</param>
+        /// <returns>RedirectToAction that takes you to the teachers list.</returns>
+        //POST : /Teacher/Update
+        [HttpPost]
+        public ActionResult Update( int id, string firstName, string lastName, string employeeNumber, string hireDate, decimal salary )
+        {
+            Teacher teacher = new Teacher( id, firstName, lastName, employeeNumber, hireDate, salary );
+            string propertyError = teacher.getPropertyError();
+            if( propertyError != null ) {
+                return getRedirectToError( propertyError );
+            }
+
+            TeacherDataController controller = new TeacherDataController();
+            controller.updateTeacher( teacher );
+
+            return RedirectToAction( "List" );
+        }
+
+
+        /// <summary>
         /// Get the list of teachers that match the search criteria and send
         /// it to Results.chtml.
         /// </summary>
@@ -103,6 +157,16 @@ namespace HTTP5101Assignment3.Controllers
         }
 
         /// <summary>
+        /// Returns a View for Add_Ajax.chtml.
+        /// </summary>
+        /// <returns>An Add_Ajax View.</returns>
+        [HttpGet]
+        public ActionResult Add_Ajax()
+        {
+            return View();
+        }
+
+        /// <summary>
         /// A utility function to create an ActionResult that will
         /// redirect to an error page if validation for Create fails.
         /// </summary>
@@ -116,29 +180,25 @@ namespace HTTP5101Assignment3.Controllers
             } );
         }
 
+        /// <summary>
+        /// Add a new Teacher to the database using the parameters passed in.
+        /// Return an ActionResult that takes you to the list of teachers.
+        /// </summary>
+        /// <param name="firstName">The teacher's first name as a string.</param>
+        /// <param name="lastName">The teacher's last name as a string.</param>
+        /// <param name="employeeNumber">The teacher's employee number as a string.</param>
+        /// <param name="hireDate">The date the teacher was hired as a string.</param>
+        /// <param name="salary">A decimal holding the teacher's salary.</param>
+        /// <returns>RedirectToAction that takes you to the teachers list.</returns>
         //POST : /Teacher/Create
         [HttpPost]
         public ActionResult Create( string firstName, string lastName, string employeeNumber, string hireDate, decimal salary )
         {
-            if( firstName == null || firstName.Length == 0 ) {
-                return getRedirectToError( "first name" );
-
-            } else if( lastName == null || lastName.Length == 0 ) {
-                return getRedirectToError( "last name" );
-
-            } else if( employeeNumber == null || employeeNumber.Length == 0 ) {
-                return getRedirectToError( "employee number" );
-
-            } else if( hireDate == null ) {
-                return getRedirectToError( "hire date" );
+            Teacher teacher = new Teacher( firstName, lastName, employeeNumber, hireDate, salary );
+            string propertyError = teacher.getPropertyError();
+            if( propertyError != null ) {
+                return getRedirectToError( propertyError );
             }
-
-            Teacher teacher = new Teacher();
-            teacher.teacherFName = firstName;
-            teacher.teacherLName = lastName;
-            teacher.employeeNumber = employeeNumber;
-            teacher.hireDate = Convert.ToDateTime( hireDate ); // "dd/mm/yyyy"
-            teacher.salary = salary;
 
             TeacherDataController controller = new TeacherDataController();
             controller.addTeacher( teacher );

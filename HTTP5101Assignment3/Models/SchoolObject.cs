@@ -22,5 +22,9 @@ namespace HTTP5101Assignment3.Models
         // Return an ordered collection of strings that represent the values
         // of a property that is a collection.
         IEnumerable<String> getPropertyList( string property );
+
+        // Validate the properties and return a viewable string to indicate which
+        // property is invalid, if any.
+        string getPropertyError();
     }
 }
